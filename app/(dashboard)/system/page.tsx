@@ -6,7 +6,17 @@ import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { StatusDot } from "@/components/ui/StatusDot";
 import { useDashboard } from "@/lib/providers/DashboardProvider";
-import { formatDateTime, formatRelative } from "@/lib/format";
+import {
+  UNAVAILABLE,
+  formatDateTime,
+  formatDuration,
+  formatRelative,
+} from "@/lib/format";
+import {
+  computeProcessingStatus,
+  processingTone,
+  type ProcessingStatus,
+} from "@/lib/domain/processing";
 
 const STATUS_TONE = {
   ok: "success",
@@ -16,7 +26,11 @@ const STATUS_TONE = {
 
 export default function SystemPage() {
   const { snapshot, source } = useDashboard();
-  const { health, runId, mode, readOnly } = snapshot;
+  const { health, freshness, runId, mode, readOnly } = snapshot;
+  // Recomputed on render rather than memoised: "overdue" is a function of
+  // wall-clock time, and a memo keyed on the snapshot would keep reporting
+  // "due in 2 min" long after the deadline passed.
+  const processing = computeProcessingStatus(health);
 
   return (
     <div className="space-y-6">
@@ -32,21 +46,34 @@ export default function SystemPage() {
           <Field label="Mode" value={mode.toUpperCase()} />
           <Field label="Read-only" value={readOnly ? "yes" : "no"} />
           <Field label="Data source" value={source} />
+          {/* Exporter freshness — how recently the replica was written. This
+              is `generated_at`, and it is the ONLY field that answers "is
+              this page's data current?". It is a different question from
+              the runner's cadence below, which the old "Last sync" label
+              conflated with it. */}
           <Field
-            label="Last sync"
+            label="Data exported"
             value={
               <span suppressHydrationWarning>
-                {formatDateTime(health.lastSync)} ({formatRelative(health.lastSync)})
+                {freshness.generatedAt == null
+                  ? UNAVAILABLE
+                  : `${formatDateTime(freshness.generatedAt)} (${formatRelative(freshness.generatedAt)})`}
+              </span>
+            }
+          />
+          <Field
+            label="Last processing"
+            value={
+              <span suppressHydrationWarning>
+                {processing.lastProcessingAt == null
+                  ? UNAVAILABLE
+                  : `${formatDateTime(processing.lastProcessingAt)} (${formatRelative(processing.lastProcessingAt)})`}
               </span>
             }
           />
           <Field
             label="Next processing"
-            value={
-              <span suppressHydrationWarning>
-                {formatDateTime(health.nextProcessing)} ({formatRelative(health.nextProcessing)})
-              </span>
-            }
+            value={<NextProcessing status={processing} />}
           />
         </CardBody>
       </Card>
@@ -85,6 +112,42 @@ export default function SystemPage() {
         </CardBody>
       </Card>
     </div>
+  );
+}
+
+/**
+ * Renders the cadence without ever hiding a miss.
+ *
+ * An overdue runner is shown as overdue — we never advance the deadline to
+ * the next future slot to make the countdown look healthy, because a
+ * deadline in the past is exactly the evidence that a bar went unprocessed.
+ */
+function NextProcessing({ status }: { status: ProcessingStatus }) {
+  if (status.state === "unknown") {
+    return (
+      <span className="text-zinc-400">
+        {UNAVAILABLE}{" "}
+        <span className="text-xs text-zinc-500">
+          (exporter reported no next bar)
+        </span>
+      </span>
+    );
+  }
+
+  const tone = processingTone(status);
+  return (
+    <span suppressHydrationWarning>
+      {formatDateTime(status.nextProcessing!)}{" "}
+      {status.state === "overdue" ? (
+        <Badge tone={tone} className="ml-1 align-middle text-[10px]">
+          {formatDuration(status.deltaSeconds!)} OVERDUE
+        </Badge>
+      ) : (
+        <span className="text-xs text-zinc-500">
+          (in {formatDuration(status.deltaSeconds!)})
+        </span>
+      )}
+    </span>
   );
 }
 

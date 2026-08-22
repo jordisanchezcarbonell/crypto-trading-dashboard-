@@ -1,6 +1,29 @@
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import type { Decision, DecisionAction } from "@/lib/domain/schemas";
-import { UNAVAILABLE, formatPct, formatRelative } from "@/lib/format";
+import {
+  UNAVAILABLE,
+  formatDateTime,
+  formatPct,
+  formatRelative,
+} from "@/lib/format";
+
+/**
+ * When the decision actually became knowable.
+ *
+ * `d.timestamp` is the FEATURE BAR — the candle the features came from. A
+ * decision whose feature bar is 08:00 on a 4h timeframe could not be known
+ * until that bar closed at 12:00, so ordering or labelling the timeline by
+ * the bar claims the agent saw the future. `signalAvailableAt` is the
+ * causally correct instant and is what this timeline sorts and renders by.
+ *
+ * `null` means the row predates migration 002 and carries no availability
+ * timestamp. We fall back to the feature bar rather than dropping the row,
+ * and the UI marks that fallback explicitly instead of passing the bar off
+ * as a decision time.
+ */
+function decidedAt(d: Decision): string {
+  return d.signalAvailableAt ?? d.timestamp;
+}
 
 const ACTION_TONE: Record<DecisionAction, BadgeTone> = {
   open_long: "success",
@@ -24,7 +47,7 @@ const ACTION_LABEL: Record<DecisionAction, string> = {
 
 export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
   const sorted = [...decisions].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    (a, b) => new Date(decidedAt(b)).getTime() - new Date(decidedAt(a)).getTime()
   );
 
   if (sorted.length === 0) {
@@ -60,12 +83,29 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                 </Badge>
               )}
             </div>
-            <span
-              className="text-xs text-zinc-500"
-              suppressHydrationWarning
-            >
-              {formatRelative(d.timestamp)}
-            </span>
+            <div className="flex flex-col items-end text-right">
+              <time
+                className="text-xs text-zinc-500"
+                dateTime={decidedAt(d)}
+                title={
+                  d.signalAvailableAt
+                    ? `Signal available at ${formatDateTime(d.signalAvailableAt)}`
+                    : `Availability not exported for this decision; showing its feature bar (${formatDateTime(d.timestamp)})`
+                }
+                suppressHydrationWarning
+              >
+                {formatRelative(decidedAt(d))}
+                {d.signalAvailableAt === null && (
+                  <span className="ml-1 text-zinc-600">(bar)</span>
+                )}
+              </time>
+              {/* The feature bar stays visible as provenance: it says which
+                  candle produced the signal, which is genuinely useful, but
+                  it is never the headline time. */}
+              <span className="text-[11px] text-zinc-600" suppressHydrationWarning>
+                bar {formatDateTime(d.timestamp)}
+              </span>
+            </div>
           </div>
           <p className="mt-2 text-sm leading-snug text-zinc-300">
             {d.rationale}

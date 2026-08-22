@@ -59,7 +59,18 @@ export type DecisionAction = z.infer<typeof DecisionActionSchema>;
 
 export const DecisionSchema = z.object({
   id: z.string(),
+  // The FEATURE-BAR timestamp: which candle the features were computed
+  // from. This is NOT when the decision became knowable, and it is NOT a
+  // key (the id is `source_decision_id`). Keep the name/meaning stable —
+  // the exporter's contract fills it from
+  // SQLite `decisions.feature_bar_timestamp`.
   timestamp: IsoDateTime,
+  // The instant the decision became causally knowable — the bar closed and
+  // the signal could be acted on. With 4h bars a decision whose feature bar
+  // is 08:00 does not exist until 12:00, so THIS is what a timeline must
+  // order and display by. `null` for rows exported before migration 002;
+  // renderers fall back to `timestamp` and must say the value is derived.
+  signalAvailableAt: IsoDateTime.nullable(),
   symbol: z.string(),
   action: DecisionActionSchema,
   // Nullable: deterministic strategies (EMA-v1, EMA-v2-risk) have no
@@ -124,8 +135,25 @@ export type HealthComponent = z.infer<typeof HealthComponentSchema>;
 
 export const HealthSnapshotSchema = z.object({
   overall: HealthStatusSchema,
-  lastSync: IsoDateTime,
-  nextProcessing: IsoDateTime,
+  /**
+   * @deprecated since migration 002 — despite the name this never carried
+   * the exporter's sync time. It is fed from the lab's `last_processed`,
+   * i.e. the last feature bar the runner handled, so with 4h bars it reads
+   * "3 hours ago" even when the exporter ran seconds earlier. Use
+   * `lastProcessingAt` for that value and `freshness.generatedAt` for real
+   * exporter freshness. Kept for one deploy so old rows still parse.
+   */
+  lastSync: IsoDateTime.nullable(),
+  /** Last feature bar the runner actually processed. `null` == unknown. */
+  lastProcessingAt: IsoDateTime.nullable(),
+  /**
+   * `lastProcessingAt + timeframe`, and nothing else. Deliberately NOT
+   * rolled forward to the next future slot: a value in the past means the
+   * runner missed a bar, and that is precisely what the dashboard exists to
+   * surface. `null` == unknown (e.g. the lab reports DIVERGED sleeves) —
+   * never a fabricated stand-in such as `now`.
+   */
+  nextProcessing: IsoDateTime.nullable(),
   components: z.array(HealthComponentSchema),
 });
 export type HealthSnapshot = z.infer<typeof HealthSnapshotSchema>;

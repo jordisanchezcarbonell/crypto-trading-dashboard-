@@ -87,7 +87,12 @@ export const DecisionRowSchema = z.object({
   source_decision_id: z.string(),
   run_id: z.string(),
   strategy: z.string().nullable().optional(),
+  // Feature-bar timestamp — which candle produced the features. Never a key
+  // (PK is `source_decision_id`; the exporter watermark scans `id`).
   ts: z.string(),
+  // Added by migration 002. `.optional()` as well as `.nullable()` so a
+  // dashboard deploy that lands before the migration keeps parsing rows.
+  signal_available_at: z.string().nullable().optional(),
   asset: z.string(),
   action: z.enum([
     "open_long",
@@ -125,8 +130,12 @@ export const SystemSnapshotRowSchema = z.object({
   run_id: z.string(),
   generated_at: z.string(),
   overall: z.enum(["ok", "degraded", "down"]),
-  last_sync: z.string(),
-  next_processing: z.string(),
+  /** @deprecated migration 002 — see lib/domain/schemas.ts. */
+  last_sync: z.string().nullable().optional(),
+  last_processing_at: z.string().nullable().optional(),
+  // NULL-able since 002: the exporter must be able to say "unknown" rather
+  // than substitute `now`, which reads as "due right now".
+  next_processing: z.string().nullable().optional(),
   components: z.array(
     z.object({
       name: z.string(),
@@ -194,6 +203,7 @@ export function mapDecision(row: DecisionRow): Decision {
   return DecisionSchema.parse({
     id: row.source_decision_id,
     timestamp: row.ts,
+    signalAvailableAt: row.signal_available_at ?? null,
     symbol: row.asset,
     action: row.action,
     confidence: row.confidence,
@@ -214,8 +224,12 @@ export function mapEquityPoint(row: EquityHistoryRow): EquityPoint {
 export function mapHealth(row: SystemSnapshotRow): HealthSnapshot {
   return HealthSnapshotSchema.parse({
     overall: row.overall,
-    lastSync: row.last_sync,
-    nextProcessing: row.next_processing,
+    lastSync: row.last_sync ?? null,
+    // Prefer the honestly-named column; fall back to the legacy one, which
+    // held exactly this value under a misleading name. No fabrication: if
+    // neither is present the answer is `null` == unknown.
+    lastProcessingAt: row.last_processing_at ?? row.last_sync ?? null,
+    nextProcessing: row.next_processing ?? null,
     components: row.components.map((c) => ({
       name: c.name,
       status: c.status,

@@ -4,9 +4,11 @@ import { DecisionsTimeline } from "@/components/tables/DecisionsTimeline";
 import type { Decision } from "@/lib/domain/schemas";
 import { UNAVAILABLE } from "@/lib/format";
 
+// Feature bar at 08:00, knowable only once the 4h bar closed at 12:00.
 const baseDecision: Decision = {
   id: "dec-1",
-  timestamp: "2026-08-22T12:00:00.000Z",
+  timestamp: "2026-08-22T08:00:00.000Z",
+  signalAvailableAt: "2026-08-22T12:00:00.000Z",
   symbol: "BTC-USDT",
   action: "hold",
   confidence: 0.75,
@@ -29,6 +31,50 @@ describe("<DecisionsTimeline />", () => {
     expect(screen.getByText(new RegExp(`confidence.*${UNAVAILABLE}`))).toBeInTheDocument();
     // Regression: no 0% rendered for the unknown case.
     expect(screen.queryByText(/^0%$/)).toBeNull();
+  });
+
+  it("dates a decision by when it became knowable, not by its feature bar", () => {
+    // The bar is 08:00 but the signal only existed at 12:00. Rendering the
+    // bar as the decision time would credit the strategy with 4h of
+    // foresight it never had.
+    const { container } = render(<DecisionsTimeline decisions={[baseDecision]} />);
+    const time = container.querySelector("time");
+    expect(time?.getAttribute("dateTime")).toBe("2026-08-22T12:00:00.000Z");
+    // The bar stays visible as provenance, but only as a secondary line.
+    expect(screen.getByText(/^bar /)).toBeInTheDocument();
+  });
+
+  it("orders by availability, so a later bar cannot jump the queue", () => {
+    // `early` has the LATER feature bar but became knowable FIRST. Sorting
+    // by `timestamp` would put it on top; sorting causally must not.
+    const early: Decision = {
+      ...baseDecision,
+      id: "early",
+      timestamp: "2026-08-22T08:00:00.000Z",
+      signalAvailableAt: "2026-08-22T12:00:00.000Z",
+      symbol: "EARLY-USDT",
+    };
+    const late: Decision = {
+      ...baseDecision,
+      id: "late",
+      timestamp: "2026-08-22T04:00:00.000Z",
+      signalAvailableAt: "2026-08-22T16:00:00.000Z",
+      symbol: "LATE-USDT",
+    };
+    const { container } = render(<DecisionsTimeline decisions={[early, late]} />);
+    const symbols = Array.from(container.querySelectorAll("li")).map(
+      (li) => li.textContent?.match(/(EARLY|LATE)-USDT/)?.[0]
+    );
+    expect(symbols).toEqual(["LATE-USDT", "EARLY-USDT"]);
+  });
+
+  it("falls back to the feature bar for pre-002 rows and labels the fallback", () => {
+    const legacy: Decision = { ...baseDecision, signalAvailableAt: null };
+    const { container } = render(<DecisionsTimeline decisions={[legacy]} />);
+    const time = container.querySelector("time");
+    expect(time?.getAttribute("dateTime")).toBe("2026-08-22T08:00:00.000Z");
+    // The fallback is marked, never passed off as a real decision time.
+    expect(screen.getByText("(bar)")).toBeInTheDocument();
   });
 
   it("keeps rendering when confidence is a real 0 (edge case)", () => {

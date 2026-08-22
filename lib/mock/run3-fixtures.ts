@@ -39,6 +39,28 @@ function isoAt(offsetMs: number): string {
   return new Date(SNAPSHOT_EPOCH + offsetMs).toISOString();
 }
 
+// RUN-3 runs on 4h bars.
+const TIMEFRAME_MS = 4 * HOUR_MS;
+
+/**
+ * A decision's two timestamps, kept causally consistent.
+ *
+ * The offset passed in is when the decision became KNOWABLE, because that
+ * is what a reader sees in the timeline. Its feature bar is one whole
+ * timeframe earlier: the bar opens, and only when it closes can the signal
+ * be acted on. Fixtures that stamped a single timestamp made it impossible
+ * to notice when the UI was rendering the bar as if it were the decision.
+ */
+function decisionTimes(availableAtOffsetMs: number): {
+  timestamp: string;
+  signalAvailableAt: string;
+} {
+  return {
+    timestamp: isoAt(availableAtOffsetMs - TIMEFRAME_MS),
+    signalAvailableAt: isoAt(availableAtOffsetMs),
+  };
+}
+
 function buildEquityCurve(): EquityPoint[] {
   const rand = mulberry32(42);
   const days = 90;
@@ -164,7 +186,7 @@ const trades: ClosedTrade[] = [
 const decisions: Decision[] = [
   {
     id: "dec_001",
-    timestamp: isoAt(-25 * 60 * 1000),
+    ...decisionTimes(-25 * 60 * 1000),
     symbol: "BTC-USDT",
     action: "hold",
     confidence: 0.62,
@@ -179,7 +201,7 @@ const decisions: Decision[] = [
   },
   {
     id: "dec_002",
-    timestamp: isoAt(-1 * HOUR_MS - 12 * 60 * 1000),
+    ...decisionTimes(-1 * HOUR_MS - 12 * 60 * 1000),
     symbol: "SOL-USDT",
     action: "open_short",
     confidence: 0.71,
@@ -194,7 +216,7 @@ const decisions: Decision[] = [
   },
   {
     id: "dec_003",
-    timestamp: isoAt(-2 * HOUR_MS - 6 * 60 * 1000),
+    ...decisionTimes(-2 * HOUR_MS - 6 * 60 * 1000),
     symbol: "ETH-USDT",
     action: "scale_in",
     confidence: 0.66,
@@ -208,7 +230,7 @@ const decisions: Decision[] = [
   },
   {
     id: "dec_004",
-    timestamp: isoAt(-5 * HOUR_MS),
+    ...decisionTimes(-5 * HOUR_MS),
     symbol: "ARB-USDT",
     action: "skip",
     confidence: 0.33,
@@ -222,7 +244,7 @@ const decisions: Decision[] = [
   },
   {
     id: "dec_005",
-    timestamp: isoAt(-9 * HOUR_MS),
+    ...decisionTimes(-9 * HOUR_MS),
     symbol: "BTC-USDT",
     action: "close",
     confidence: 0.78,
@@ -236,7 +258,7 @@ const decisions: Decision[] = [
   },
   {
     id: "dec_006",
-    timestamp: isoAt(-14 * HOUR_MS),
+    ...decisionTimes(-14 * HOUR_MS),
     symbol: "LINK-USDT",
     action: "open_long",
     confidence: 0.69,
@@ -249,7 +271,7 @@ const decisions: Decision[] = [
   },
   {
     id: "dec_007",
-    timestamp: isoAt(-22 * HOUR_MS),
+    ...decisionTimes(-22 * HOUR_MS),
     symbol: "MATIC-USDT",
     action: "hold",
     confidence: 0.51,
@@ -357,30 +379,50 @@ const strategies = buildStrategies();
 
 export interface BuildRun3Options {
   now?: Date;
-  // Fake how long ago the exporter last synced. Defaults to 45s.
-  lastSyncOffsetMs?: number;
-  nextProcessingOffsetMs?: number;
+  /**
+   * How long ago the exporter wrote the replica. This — and only this — is
+   * what freshness means. Defaults to 45s ago.
+   */
+  generatedAtOffsetMs?: number;
+  /**
+   * How long ago the runner processed its last feature bar. Defaults to
+   * 3h32m ago so that, on a 4h timeframe, the next bar is due in 28 min.
+   * Pass a value beyond one timeframe (e.g. `-(4 * HOUR + 10 * MIN)`) to
+   * exercise the overdue path.
+   */
+  lastProcessingOffsetMs?: number;
 }
 
 export function buildRun3Snapshot(options: BuildRun3Options = {}): RunSnapshot {
   const now = options.now ?? new Date();
-  const lastSyncOffset = options.lastSyncOffsetMs ?? -45 * 1000;
-  const nextProcessingOffset =
-    options.nextProcessingOffsetMs ?? 4 * 60 * 1000 + 15 * 1000;
+  const generatedAtOffset = options.generatedAtOffsetMs ?? -45 * 1000;
+  const lastProcessingOffset =
+    options.lastProcessingOffsetMs ?? -(3 * HOUR_MS + 32 * 60 * 1000);
 
-  const lastSyncIso = new Date(now.getTime() + lastSyncOffset).toISOString();
+  const generatedAtIso = new Date(
+    now.getTime() + generatedAtOffset
+  ).toISOString();
+  const lastProcessingAtIso = new Date(
+    now.getTime() + lastProcessingOffset
+  ).toISOString();
+  // The whole rule, in one line. No roll-forward: if this lands in the past
+  // the runner is overdue, and the dashboard is supposed to say so.
   const nextProcessingIso = new Date(
-    now.getTime() + nextProcessingOffset
+    Date.parse(lastProcessingAtIso) + TIMEFRAME_MS
   ).toISOString();
 
   const health: HealthSnapshot = {
     overall: "ok",
-    lastSync: lastSyncIso,
+    // Deprecated by migration 002 and kept only so mock and Supabase rows
+    // have the same shape. It carries the last processed bar, never a sync
+    // time; nothing in the UI should read it.
+    lastSync: lastProcessingAtIso,
+    lastProcessingAt: lastProcessingAtIso,
     nextProcessing: nextProcessingIso,
     components: [
       { name: "exchange_ws", status: "ok", detail: "Binance WS connected", latencyMs: 82 },
       { name: "market_data", status: "ok", detail: "1m candles fresh", latencyMs: 120 },
-      { name: "signal_engine", status: "ok", detail: "5m cycle", latencyMs: 340 },
+      { name: "signal_engine", status: "ok", detail: "4h bar cycle", latencyMs: 340 },
       { name: "order_router", status: "ok", detail: "read-only mode: no orders sent", latencyMs: 0 },
       { name: "persistence", status: "ok", detail: "Supabase reachable", latencyMs: 190 },
     ],
@@ -392,7 +434,9 @@ export function buildRun3Snapshot(options: BuildRun3Options = {}): RunSnapshot {
     readOnly: true,
     startedAt: new Date(RUN_START_EPOCH).toISOString(),
     health,
-    freshness: computeFreshness(lastSyncIso, now),
+    // Freshness is the exporter's write time, NOT the last processed bar.
+    // Deriving it from the bar made a 4h-cadence run look permanently stale.
+    freshness: computeFreshness(generatedAtIso, now),
     strategies,
     positions,
     trades,

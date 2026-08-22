@@ -130,7 +130,10 @@ async function main() {
       source_decision_id: d.id,
       run_id: snapshot.runId,
       strategy: null,
+      // Feature bar, unchanged in meaning by migration 002.
       ts: d.timestamp,
+      // When the decision became knowable — what the timeline displays.
+      signal_available_at: d.signalAvailableAt,
       asset: d.symbol,
       action: d.action,
       confidence: d.confidence,
@@ -160,7 +163,10 @@ async function main() {
         run_id: snapshot.runId,
         generated_at: generatedAt,
         overall: snapshot.health.overall,
+        // Deprecated by 002; still written for one deploy so a dashboard
+        // build older than this migration keeps rendering.
         last_sync: snapshot.health.lastSync,
+        last_processing_at: snapshot.health.lastProcessingAt,
         next_processing: snapshot.health.nextProcessing,
         components: snapshot.health.components.map((c) => ({
           name: c.name,

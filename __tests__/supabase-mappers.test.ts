@@ -180,6 +180,87 @@ describe("Supabase row → domain mappers", () => {
     expect(perf.currentEquityUsd).toBe(10345.12);
   });
 
+  it("carries signal_available_at through, and nulls it for pre-002 rows", () => {
+    const base = {
+      source_decision_id: "RUN-3:EMA-v1:decision:7",
+      run_id: "RUN-3",
+      strategy: "EMA-v1",
+      ts: "2026-08-22T08:00:00.000Z",
+      asset: "BTC-USDT",
+      action: "hold" as const,
+      confidence: null,
+      rationale: "derived: target=long",
+      signals: [{ name: "close", value: 61000 }],
+      executed: true,
+    };
+
+    const withAvailability = mapDecision(
+      DecisionRowSchema.parse({
+        ...base,
+        signal_available_at: "2026-08-22T12:00:00.000Z",
+      })
+    );
+    // `ts` keeps its feature-bar meaning; availability is additive.
+    expect(withAvailability.timestamp).toBe("2026-08-22T08:00:00.000Z");
+    expect(withAvailability.signalAvailableAt).toBe("2026-08-22T12:00:00.000Z");
+
+    // A row written before the migration simply lacks the column. It must
+    // parse (so a new dashboard can read old rows) and report null rather
+    // than silently reusing the bar as if it were the availability time.
+    const legacy = mapDecision(DecisionRowSchema.parse(base));
+    expect(legacy.signalAvailableAt).toBeNull();
+    expect(legacy.timestamp).toBe("2026-08-22T08:00:00.000Z");
+  });
+
+  it("prefers last_processing_at, falls back to last_sync, never fabricates", () => {
+    const base = {
+      id: "abc",
+      run_id: "RUN-3",
+      generated_at: "2026-08-22T12:30:00.000Z",
+      overall: "ok" as const,
+      components: [],
+      performance: null,
+      comparisons: null,
+    };
+
+    // Post-002 row: the honestly-named column wins.
+    const migrated = mapHealth(
+      SystemSnapshotRowSchema.parse({
+        ...base,
+        last_sync: "2026-08-22T08:00:00.000Z",
+        last_processing_at: "2026-08-22T12:00:00.000Z",
+        next_processing: "2026-08-22T16:00:00.000Z",
+      })
+    );
+    expect(migrated.lastProcessingAt).toBe("2026-08-22T12:00:00.000Z");
+    expect(migrated.nextProcessing).toBe("2026-08-22T16:00:00.000Z");
+
+    // Pre-002 row: `last_sync` held exactly this value under a misleading
+    // name, so reusing it is a rename, not a guess.
+    const legacy = mapHealth(
+      SystemSnapshotRowSchema.parse({
+        ...base,
+        last_sync: "2026-08-22T12:00:00.000Z",
+        next_processing: "2026-08-22T16:00:00.000Z",
+      })
+    );
+    expect(legacy.lastProcessingAt).toBe("2026-08-22T12:00:00.000Z");
+
+    // Exporter could not determine the cadence (e.g. DIVERGED sleeves).
+    // NULL must survive as NULL — the old code substituted `now`, which
+    // rendered as "due right now" and hid the divergence.
+    const unknown = mapHealth(
+      SystemSnapshotRowSchema.parse({
+        ...base,
+        last_sync: null,
+        last_processing_at: null,
+        next_processing: null,
+      })
+    );
+    expect(unknown.lastProcessingAt).toBeNull();
+    expect(unknown.nextProcessing).toBeNull();
+  });
+
   it("handles null-ish component metadata", () => {
     const row = SystemSnapshotRowSchema.parse({
       id: "abc",
