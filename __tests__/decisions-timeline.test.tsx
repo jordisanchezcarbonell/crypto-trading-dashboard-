@@ -71,14 +71,19 @@ describe("<DecisionsTimeline />", () => {
   it("shows unknown, NOT the feature bar, when availability was never exported", () => {
     const legacy: Decision = { ...baseDecision, signalAvailableAt: null };
     const { container } = render(<DecisionsTimeline decisions={[legacy]} />);
-    const time = container.querySelector("time");
 
-    // The headline slot must not carry the bar. Rendering it here is what
-    // let a decision that could not be known until 12:00 read as though it
-    // had been made at 08:00.
-    expect(time?.getAttribute("dateTime")).toBeNull();
-    expect(time?.textContent).toBe(UNAVAILABLE);
-    expect(time?.textContent).not.toMatch(/ago|in /);
+    // No <time> at all. Emitting `<time>—</time>` (no datetime attribute)
+    // would be invalid HTML: with the attribute absent the element's text
+    // must itself be a valid date, so the markup would be asserting that
+    // the em dash is the timestamp.
+    expect(container.querySelector("time")).toBeNull();
+
+    // The headline slot must not carry the bar either. Rendering it here is
+    // what let a decision that could not be known until 12:00 read as
+    // though it had been made at 08:00.
+    expect(container.innerHTML).not.toContain("2026-08-22T08:00:00.000Z");
+    expect(screen.getByText(UNAVAILABLE)).toBeInTheDocument();
+    expect(container.innerHTML).not.toContain("undefined");
 
     // The bar survives one line down as provenance, still marked.
     expect(screen.getByText(/availability n\/a/)).toBeInTheDocument();

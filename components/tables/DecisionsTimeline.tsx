@@ -120,20 +120,30 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                   )}
                 </div>
                 <div className='flex flex-col items-end text-right'>
-                  <time
-                    className='num text-[11px] text-faint'
-                    dateTime={d.signalAvailableAt ?? undefined}
-                    title={
-                      d.signalAvailableAt
-                        ? `Signal available at ${formatDateTime(d.signalAvailableAt)}`
-                        : 'The exporter never wrote an availability timestamp for this decision, so when it became knowable is unknown. The feature bar below is provenance, not a decision time.'
-                    }
-                    suppressHydrationWarning
-                  >
-                    {d.signalAvailableAt === null
-                      ? UNAVAILABLE
-                      : formatRelative(d.signalAvailableAt)}
-                  </time>
+                  {/* A `<time>` only where there is a time.
+                      With no `datetime` attribute, HTML requires the
+                      element's own text to be a valid date string — so an
+                      unknown row would emit `<time>—</time>`, telling every
+                      parser and screen reader that the em dash IS the
+                      timestamp. A plain span renders identical pixels and
+                      makes no machine-readable claim at all. */}
+                  {d.signalAvailableAt === null ? (
+                    <span
+                      className='num text-[11px] text-faint'
+                      title='The exporter never wrote an availability timestamp for this decision, so when it became knowable is unknown. The feature bar below is provenance, not a decision time.'
+                    >
+                      {UNAVAILABLE}
+                    </span>
+                  ) : (
+                    <time
+                      className='num text-[11px] text-faint'
+                      dateTime={d.signalAvailableAt}
+                      title={`Signal available at ${formatDateTime(d.signalAvailableAt)}`}
+                      suppressHydrationWarning
+                    >
+                      {formatRelative(d.signalAvailableAt)}
+                    </time>
+                  )}
                   {/* The feature bar stays visible as provenance — which
                       candle produced the signal is genuinely useful — but it
                       is never the headline time.
