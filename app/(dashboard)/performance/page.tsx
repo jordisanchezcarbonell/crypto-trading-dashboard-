@@ -19,15 +19,16 @@ export default function PerformancePage() {
   const { performance, equityCurve, trades } = snapshot;
 
   return (
-    <div className="space-y-6">
+    <div className="animate-rise space-y-6">
       <PageHeader
         title="Performance"
         description="Return, risk and trade quality metrics for RUN-3."
       />
 
       <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <Stat label="Equity" value={formatUsd(performance.currentEquityUsd)} />
+        <Stat size="sm" label="Equity" value={formatUsd(performance.currentEquityUsd)} />
         <Stat
+          size="sm"
           label="Total return"
           value={formatOptionalSignedPct(performance.totalReturnPct)}
           tone={
@@ -39,6 +40,7 @@ export default function PerformancePage() {
           }
         />
         <Stat
+          size="sm"
           label="CAGR"
           value={formatOptionalSignedPct(performance.cagrPct)}
           tone={
@@ -50,12 +52,13 @@ export default function PerformancePage() {
           }
         />
         <Stat
+          size="sm"
           label="Max DD"
           value={formatOptionalPct(performance.maxDrawdownPct)}
           tone={performance.maxDrawdownPct == null ? "neutral" : "negative"}
         />
-        <Stat label="Sharpe" value={formatOptionalNumber(performance.sharpe)} />
-        <Stat label="Sortino" value={formatOptionalNumber(performance.sortino)} />
+        <Stat size="sm" label="Sharpe" value={formatOptionalNumber(performance.sharpe)} />
+        <Stat size="sm" label="Sortino" value={formatOptionalNumber(performance.sortino)} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">

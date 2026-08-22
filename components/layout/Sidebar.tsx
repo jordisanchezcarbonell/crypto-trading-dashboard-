@@ -4,56 +4,93 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { useDashboard } from "@/lib/providers/DashboardProvider";
-
-const NAV = [
-  { href: "/", label: "Overview" },
-  { href: "/positions", label: "Positions" },
-  { href: "/trades", label: "Trades" },
-  { href: "/decisions", label: "Decisions" },
-  { href: "/performance", label: "Performance" },
-  { href: "/compare", label: "Compare" },
-  { href: "/system", label: "System" },
-] as const;
+import { NAV, isActive } from "./nav";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { source } = useDashboard();
-  const sourceLabel = source === "supabase" ? "Supabase mode" : "Mock mode";
-  const sourceHint =
-    source === "supabase"
-      ? "Data comes from the Supabase observability replica (read-only)."
-      : "Data is served from local RUN-3 fixtures. Supabase is not connected.";
+  const { source, snapshot } = useDashboard();
+  const supabase = source === "supabase";
+  const sourceHint = supabase
+    ? "Data comes from the Supabase observability replica (read-only)."
+    : "Data is served from local RUN-3 fixtures. Supabase is not connected.";
+
   return (
-    <aside className="flex h-screen w-60 shrink-0 flex-col border-r border-zinc-800/80 bg-zinc-950/80 px-4 py-6">
-      <div className="mb-8 flex items-center gap-2 px-2">
-        <div className="h-6 w-6 rounded bg-gradient-to-br from-cyan-400 to-emerald-500" />
-        <span className="font-semibold tracking-tight">Trading Lab</span>
-      </div>
-      <nav className="flex flex-1 flex-col gap-1">
-        {NAV.map((item) => {
-          const active =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
+    <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-surface/50 px-3 py-5 backdrop-blur-sm lg:flex">
+      <Link
+        href="/"
+        className="mb-7 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-raised/60"
+      >
+        <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-accent to-pos shadow-[0_0_16px_-4px_var(--color-accent)]">
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4 text-base"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m4 16 4.5-5 3.5 3 7.5-8" />
+          </svg>
+        </span>
+        <span className="flex flex-col leading-tight">
+          <span className="text-sm font-semibold tracking-tight text-ink">
+            Trading Lab
+          </span>
+          <span className="num text-[10px] text-faint">{snapshot.runId}</span>
+        </span>
+      </Link>
+
+      <nav aria-label="Main" className="flex flex-1 flex-col gap-0.5">
+        {NAV.map(({ href, label, Icon }) => {
+          const active = isActive(pathname, href);
           return (
             <Link
-              key={item.href}
-              href={item.href}
+              key={href}
+              href={href}
+              aria-current={active ? "page" : undefined}
               className={clsx(
-                "rounded-lg px-3 py-2 text-sm transition-colors",
+                "group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150",
                 active
-                  ? "bg-zinc-800/80 text-zinc-50"
-                  : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-100"
+                  ? "bg-raised text-ink"
+                  : "text-muted hover:bg-raised/50 hover:text-ink"
               )}
             >
-              {item.label}
+              {active && (
+                <span
+                  aria-hidden="true"
+                  className="absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-r-full bg-accent"
+                />
+              )}
+              <Icon
+                className={clsx(
+                  "h-4 w-4 shrink-0 transition-colors",
+                  active ? "text-accent" : "text-faint group-hover:text-muted"
+                )}
+              />
+              {label}
             </Link>
           );
         })}
       </nav>
-      <div className="mt-6 rounded-lg border border-zinc-800/70 bg-zinc-900/40 p-3 text-xs text-zinc-400">
-        <div className="font-medium text-zinc-200">{sourceLabel}</div>
-        <p className="mt-1 leading-snug">{sourceHint}</p>
+
+      <div className="mt-6 rounded-xl border border-line bg-surface/80 p-3">
+        <div className="flex items-center gap-2">
+          <span
+            className={clsx(
+              "h-1.5 w-1.5 rounded-full",
+              supabase ? "bg-pos" : "bg-warn"
+            )}
+            aria-hidden="true"
+          />
+          <span className="text-xs font-medium text-ink">
+            {supabase ? "Supabase mode" : "Mock mode"}
+          </span>
+        </div>
+        <p className="mt-1.5 text-[11px] leading-relaxed text-faint">
+          {sourceHint}
+        </p>
       </div>
     </aside>
   );

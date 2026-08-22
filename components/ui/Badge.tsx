@@ -7,15 +7,17 @@ export type BadgeTone =
   | "warning"
   | "success"
   | "danger"
-  | "muted";
+  | "muted"
+  | "accent";
 
 const toneClasses: Record<BadgeTone, string> = {
-  neutral: "border-zinc-700 bg-zinc-800/60 text-zinc-200",
-  info: "border-cyan-500/30 bg-cyan-500/10 text-cyan-300",
-  warning: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  danger: "border-rose-500/30 bg-rose-500/10 text-rose-300",
-  muted: "border-zinc-800 bg-zinc-900/60 text-zinc-400",
+  neutral: "border-edge bg-overlay text-ink",
+  info: "border-info/25 bg-info/10 text-info",
+  accent: "border-accent/25 bg-accent/10 text-accent",
+  warning: "border-warn/25 bg-warn/10 text-warn",
+  success: "border-pos/25 bg-pos/10 text-pos",
+  danger: "border-neg/25 bg-neg/10 text-neg",
+  muted: "border-line bg-raised text-muted",
 };
 
 export function Badge({
@@ -30,7 +32,7 @@ export function Badge({
   return (
     <span
       className={clsx(
-        "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-medium leading-5",
         toneClasses[tone],
         className
       )}

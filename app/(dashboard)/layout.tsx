@@ -5,6 +5,7 @@ import {
 } from "@/lib/data-source/factory";
 import { DashboardProvider } from "@/lib/providers/DashboardProvider";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { MobileNav } from "@/components/layout/MobileNav";
 import { Header } from "@/components/layout/Header";
 
 const RUN_ID = process.env.DASHBOARD_RUN_ID ?? DEFAULT_RUN_ID;
@@ -24,11 +25,17 @@ export default async function DashboardLayout({
 
   return (
     <DashboardProvider value={{ snapshot, source: provider.source }}>
-      <div className="flex min-h-screen bg-zinc-950">
+      <div className="flex min-h-screen">
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col">
           <Header />
-          <main className="flex-1 overflow-x-hidden px-8 py-8">{children}</main>
+          <MobileNav />
+          <main
+            id="main"
+            className="mx-auto w-full max-w-[1600px] flex-1 overflow-x-hidden px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
+          >
+            {children}
+          </main>
         </div>
       </div>
     </DashboardProvider>

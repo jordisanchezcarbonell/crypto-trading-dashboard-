@@ -9,26 +9,63 @@ export interface StatProps {
   // Distinct from `default` (bright white) so the user does not confuse an
   // absent metric with a real number close to zero.
   tone?: "default" | "positive" | "negative" | "warning" | "neutral";
+  /** Renders the value smaller — for dense 6-up rows. */
+  size?: "md" | "sm";
+  className?: string;
 }
 
 const toneClass: Record<NonNullable<StatProps["tone"]>, string> = {
-  default: "text-zinc-100",
-  positive: "text-emerald-400",
-  negative: "text-rose-400",
-  warning: "text-amber-400",
-  neutral: "text-zinc-400",
+  default: "text-ink",
+  positive: "text-pos",
+  negative: "text-neg",
+  warning: "text-warn",
+  neutral: "text-faint",
 };
 
-export function Stat({ label, value, hint, tone = "default" }: StatProps) {
+// Colour bleeding in from the top edge, keyed to the same tone as the value.
+const glowClass: Record<NonNullable<StatProps["tone"]>, string> = {
+  default: "from-accent/40",
+  positive: "from-pos/50",
+  negative: "from-neg/50",
+  warning: "from-warn/50",
+  neutral: "from-edge",
+};
+
+export function Stat({
+  label,
+  value,
+  hint,
+  tone = "default",
+  size = "md",
+  className,
+}: StatProps) {
   return (
-    <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 px-5 py-4">
-      <div className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+    <div
+      className={clsx(
+        "group relative overflow-hidden rounded-card border border-line bg-surface/70 px-4 py-3.5 transition-colors duration-200 hover:border-edge hover:bg-raised/70",
+        className
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className={clsx(
+          "absolute inset-x-0 top-0 h-px bg-linear-to-r to-transparent",
+          glowClass[tone]
+        )}
+      />
+      <div className="eyebrow truncate" title={label}>
         {label}
       </div>
-      <div className={clsx("mt-1 text-2xl font-semibold tabular-nums", toneClass[tone])}>
+      <div
+        className={clsx(
+          "num mt-1.5 font-semibold",
+          size === "sm" ? "text-xl" : "text-2xl",
+          toneClass[tone]
+        )}
+      >
         {value}
       </div>
-      {hint && <div className="mt-1 text-xs text-zinc-400">{hint}</div>}
+      {hint && <div className="mt-1 truncate text-xs text-muted">{hint}</div>}
     </div>
   );
 }

@@ -9,40 +9,46 @@ export interface Column<T> {
   className?: string;
 }
 
+const alignClass = {
+  left: "text-left",
+  right: "text-right",
+  center: "text-center",
+} as const;
+
 export function DataTable<T>({
   rows,
   columns,
   rowKey,
   emptyLabel = "No data",
+  caption,
 }: {
   rows: T[];
   columns: Column<T>[];
   rowKey: (row: T) => string;
   emptyLabel?: string;
+  caption?: string;
 }) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30 px-6 py-10 text-center text-sm text-zinc-400">
+      <div className="rounded-card border border-dashed border-edge bg-surface/40 px-6 py-12 text-center text-sm text-muted">
         {emptyLabel}
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-900/40">
-      <table className="min-w-full text-sm">
+    <div className="overflow-x-auto rounded-card border border-line bg-surface/70 shadow-card">
+      <table className="min-w-full border-separate border-spacing-0 text-sm">
+        {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
-          <tr className="border-b border-zinc-800/80 text-xs uppercase tracking-wide text-zinc-500">
+          <tr>
             {columns.map((c) => (
               <th
                 key={c.key}
+                scope="col"
                 className={clsx(
-                  "px-4 py-3 font-medium",
-                  c.align === "right"
-                    ? "text-right"
-                    : c.align === "center"
-                      ? "text-center"
-                      : "text-left"
+                  "eyebrow whitespace-nowrap border-b border-line bg-raised/40 px-4 py-2.5",
+                  alignClass[c.align ?? "left"]
                 )}
               >
                 {c.header}
@@ -50,22 +56,21 @@ export function DataTable<T>({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-zinc-800/60">
+        <tbody>
           {rows.map((row) => (
             <tr
               key={rowKey(row)}
-              className="text-zinc-200 hover:bg-zinc-800/30"
+              className="group text-ink transition-colors duration-100 hover:bg-raised/60"
             >
               {columns.map((c) => (
                 <td
                   key={c.key}
                   className={clsx(
-                    "px-4 py-3 tabular-nums",
-                    c.align === "right"
-                      ? "text-right"
-                      : c.align === "center"
-                        ? "text-center"
-                        : "text-left",
+                    "whitespace-nowrap border-b border-line/60 px-4 py-2.5 group-last:border-b-0",
+                    // Numbers live in the right-aligned columns: give them the
+                    // monospaced, tabular treatment so digits stack in a grid.
+                    c.align === "right" && "num",
+                    alignClass[c.align ?? "left"],
                     c.className
                   )}
                 >

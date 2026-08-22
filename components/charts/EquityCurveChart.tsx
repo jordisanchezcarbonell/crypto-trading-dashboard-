@@ -11,6 +11,14 @@ import {
 } from "recharts";
 import type { EquityPoint } from "@/lib/domain/schemas";
 import { formatDate, formatUsd } from "@/lib/format";
+import {
+  CHART,
+  ChartFrame,
+  ChartTooltip,
+  axisProps,
+  chartMargin,
+  gridProps,
+} from "./chart-theme";
 
 export function EquityCurveChart({
   points,
@@ -19,54 +27,51 @@ export function EquityCurveChart({
   points: EquityPoint[];
   height?: number;
 }) {
-  const data = points.map((p) => ({
-    ts: p.timestamp,
-    equity: p.equityUsd,
-  }));
+  const data = points.map((p) => ({ ts: p.timestamp, equity: p.equityUsd }));
+
   return (
-    <div style={{ width: "100%", height }}>
+    <ChartFrame height={height}>
       <ResponsiveContainer>
-        <AreaChart data={data} margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
+        <AreaChart data={data} margin={chartMargin}>
           <defs>
             <linearGradient id="equityFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.35} />
-              <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
+              <stop offset="0%" stopColor={CHART.accent} stopOpacity={0.28} />
+              <stop offset="100%" stopColor={CHART.accent} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="#27272a" strokeDasharray="3 3" />
+          <CartesianGrid {...gridProps} />
           <XAxis
             dataKey="ts"
             tickFormatter={(v) => formatDate(v as string).slice(5)}
-            stroke="#52525b"
-            fontSize={11}
             minTickGap={40}
+            {...axisProps}
           />
           <YAxis
-            stroke="#52525b"
-            fontSize={11}
             tickFormatter={(v) => formatUsd(Number(v), { compact: true })}
-            width={64}
+            width={62}
             domain={["auto", "auto"]}
+            {...axisProps}
           />
           <Tooltip
-            contentStyle={{
-              background: "#18181b",
-              border: "1px solid #3f3f46",
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelFormatter={(v) => formatDate(v as string)}
-            formatter={(value) => [formatUsd(Number(value)), "Equity"]}
+            cursor={{ stroke: CHART.accent, strokeOpacity: 0.35, strokeWidth: 1 }}
+            content={
+              <ChartTooltip
+                labelFormatter={(v) => formatDate(String(v))}
+                nameFormatter={() => "Equity"}
+                valueFormatter={(value) => formatUsd(value)}
+              />
+            }
           />
           <Area
             type="monotone"
             dataKey="equity"
-            stroke="#22d3ee"
+            stroke={CHART.accent}
             fill="url(#equityFill)"
             strokeWidth={2}
+            activeDot={{ r: 3.5, strokeWidth: 2, stroke: "#06070a" }}
           />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   );
 }

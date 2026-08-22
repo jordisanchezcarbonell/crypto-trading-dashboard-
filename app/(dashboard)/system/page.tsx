@@ -33,7 +33,7 @@ export default function SystemPage() {
   const processing = computeProcessingStatus(health);
 
   return (
-    <div className="space-y-6">
+    <div className="animate-rise space-y-6">
       <PageHeader
         title="System"
         description="Health of the trading lab components feeding this dashboard."
@@ -82,9 +82,9 @@ export default function SystemPage() {
         <CardHeader
           title="Components"
           right={
-            <div className="flex items-center gap-2 text-xs text-zinc-400">
+            <div className="flex items-center gap-2 rounded-md border border-line bg-raised px-2 py-1 text-xs text-muted">
               <StatusDot status={health.overall} />
-              <span>Overall {health.overall}</span>
+              <span className="capitalize">Overall {health.overall}</span>
             </div>
           }
         />
@@ -92,19 +92,21 @@ export default function SystemPage() {
           {health.components.map((c) => (
             <div
               key={c.name}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800/60 bg-zinc-950/40 px-4 py-3 text-sm"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-base/50 px-4 py-3 text-sm transition-colors hover:border-edge"
             >
               <div className="flex items-center gap-3">
                 <StatusDot status={c.status} />
-                <span className="font-medium text-zinc-100">{c.name}</span>
+                <span className="font-medium text-ink">{c.name}</span>
                 <Badge tone={STATUS_TONE[c.status]}>
                   {c.status.toUpperCase()}
                 </Badge>
               </div>
-              <div className="flex items-center gap-4 text-xs text-zinc-400">
+              <div className="flex items-center gap-4 text-xs text-muted">
                 {c.detail && <span>{c.detail}</span>}
                 {typeof c.latencyMs === "number" && (
-                  <span className="font-mono">{c.latencyMs} ms</span>
+                  <span className="num rounded border border-line bg-raised px-1.5 py-0.5 text-ink">
+                    {c.latencyMs} ms
+                  </span>
                 )}
               </div>
             </div>
@@ -160,10 +162,8 @@ function Field({
 }) {
   return (
     <div>
-      <div className="text-xs uppercase tracking-wide text-zinc-500">
-        {label}
-      </div>
-      <div className="mt-1 text-zinc-100">{value}</div>
+      <div className="eyebrow">{label}</div>
+      <div className="num mt-1 text-ink">{value}</div>
     </div>
   );
 }
