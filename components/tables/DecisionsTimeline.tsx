@@ -3,11 +3,12 @@ import { Badge, type BadgeTone } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import type { Decision, DecisionAction } from '@/lib/domain/schemas';
 import {
-  UNAVAILABLE,
   formatDateTime,
   formatPct,
   formatRelative,
+  formatSignalValue,
 } from '@/lib/format';
+import { isRedundantRationale } from '@/lib/domain/rationale';
 
 /**
  * Ordering key — deliberately NOT a displayed value.
@@ -106,13 +107,22 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                     {d.symbol}
                   </span>
                   {/* Label and value stay in one element so the rendered
-                      text reads as a single "confidence 75%" string. */}
-                  <span className='num text-[11px] text-muted'>
-                    confidence{' '}
-                    {d.confidence == null
-                      ? UNAVAILABLE
-                      : formatPct(d.confidence * 100, 0)}
-                  </span>
+                      text reads as a single "confidence 75%" string.
+
+                      Absent entirely when unknown. The em-dash convention
+                      exists to stop a missing number reading as zero — but
+                      that only applies where a slot must be held: in a
+                      table column, in a stat card. Here the strategies that
+                      have no confidence have none on EVERY row, so the
+                      dash was printed on every card in the column, and the
+                      label was doing the shouting. Rendering nothing cannot
+                      be mistaken for 0% either, and a real 0 still prints
+                      "confidence 0%". */}
+                  {d.confidence != null && (
+                    <span className='num text-[11px] text-muted'>
+                      confidence {formatPct(d.confidence * 100, 0)}
+                    </span>
+                  )}
                   {!d.executed && (
                     <Badge tone='muted' className='text-[10px] tracking-wider'>
                       NOT EXECUTED
@@ -120,21 +130,24 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                   )}
                 </div>
                 <div className='flex flex-col items-end text-right'>
-                  {/* A `<time>` only where there is a time.
+                  {/* A `<time>` only where there is a time — and only a line
+                      where there is something to put on it.
+
                       With no `datetime` attribute, HTML requires the
-                      element's own text to be a valid date string — so an
-                      unknown row would emit `<time>—</time>`, telling every
-                      parser and screen reader that the em dash IS the
-                      timestamp. A plain span renders identical pixels and
-                      makes no machine-readable claim at all. */}
-                  {d.signalAvailableAt === null ? (
-                    <span
-                      className='num text-[11px] text-faint'
-                      title='The exporter never wrote an availability timestamp for this decision, so when it became knowable is unknown. The feature bar below is provenance, not a decision time.'
-                    >
-                      {UNAVAILABLE}
-                    </span>
-                  ) : (
+                      element's own text to be a valid date string, so an
+                      unknown row must not emit `<time>—</time>`: that tells
+                      every parser and screen reader that the em dash IS the
+                      timestamp. The earlier fix was a plain span holding an
+                      em dash, which was correct markup but left a lone dash
+                      hovering above the bar line on every row an exporter
+                      never stamped — a whole line spent announcing an
+                      absence that the line beneath already names.
+
+                      So the headline is simply absent, and `availability
+                      n/a` on the bar line carries the fact. The invariant
+                      that matters is untouched: what survives is labelled
+                      `bar`, never presented as when the decision was made. */}
+                  {d.signalAvailableAt !== null && (
                     <time
                       className='num text-[11px] text-faint'
                       dateTime={d.signalAvailableAt}
@@ -148,12 +161,22 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                       candle produced the signal is genuinely useful — but it
                       is never the headline time.
 
-                      When availability was never exported the headline IS
-                      the bar, and the caveat belongs on this line. Marking
-                      it in both places made every row read "(bar) … bar",
-                      which says the word twice and explains it once. */}
+                      When availability was never exported this line is the
+                      only one in the slot, so it takes the size the headline
+                      would have had. Left at 10px it read as a footnote to
+                      something that was not there. */}
                   <span
-                    className='num text-[10px] text-faint/70'
+                    className={clsx(
+                      'num',
+                      d.signalAvailableAt === null
+                        ? 'text-[11px] text-faint'
+                        : 'text-[10px] text-faint/70',
+                    )}
+                    title={
+                      d.signalAvailableAt === null
+                        ? 'The exporter never wrote an availability timestamp for this decision, so when it became knowable is unknown. This is the feature bar — provenance, not a decision time.'
+                        : undefined
+                    }
                     suppressHydrationWarning
                   >
                     bar {formatDateTime(d.timestamp)}
@@ -162,9 +185,11 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                 </div>
               </div>
 
-              <p className='mt-2 text-sm leading-relaxed text-muted'>
-                {d.rationale}
-              </p>
+              {!isRedundantRationale(d.rationale, d.signals) && (
+                <p className='mt-2 text-sm leading-relaxed text-muted'>
+                  {d.rationale}
+                </p>
+              )}
 
               {d.signals.length > 0 && (
                 <div className='mt-3 flex flex-wrap gap-1.5'>
@@ -174,7 +199,9 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                       className='num inline-flex items-center gap-1.5 rounded-md border border-line bg-base/60 px-2 py-0.5 text-[11px]'
                     >
                       <span className='text-faint'>{s.name}</span>
-                      <span className='text-ink'>{String(s.value)}</span>
+                      <span className='text-ink'>
+                        {formatSignalValue(s.value)}
+                      </span>
                     </span>
                   ))}
                 </div>

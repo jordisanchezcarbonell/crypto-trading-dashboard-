@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import type { EquityPoint } from "@/lib/domain/schemas";
-import { formatDate, formatPct } from "@/lib/format";
+import { formatPct } from "@/lib/format";
 import {
   CHART,
   ChartFrame,
@@ -18,6 +18,7 @@ import {
   axisProps,
   chartMargin,
   gridProps,
+  timeAxis,
 } from "./chart-theme";
 
 export function DrawdownChart({
@@ -28,6 +29,7 @@ export function DrawdownChart({
   height?: number;
 }) {
   const data = points.map((p) => ({ ts: p.timestamp, dd: p.drawdownPct }));
+  const axis = timeAxis(points);
 
   return (
     <ChartFrame height={height}>
@@ -42,7 +44,7 @@ export function DrawdownChart({
           <CartesianGrid {...gridProps} />
           <XAxis
             dataKey="ts"
-            tickFormatter={(v) => formatDate(v as string).slice(5)}
+            tickFormatter={axis.tickFormatter}
             minTickGap={40}
             {...axisProps}
           />
@@ -55,7 +57,7 @@ export function DrawdownChart({
             cursor={{ stroke: CHART.neg, strokeOpacity: 0.35, strokeWidth: 1 }}
             content={
               <ChartTooltip
-                labelFormatter={(v) => formatDate(String(v))}
+                labelFormatter={axis.labelFormatter}
                 nameFormatter={() => "Drawdown"}
                 valueFormatter={(value) => formatPct(value)}
               />

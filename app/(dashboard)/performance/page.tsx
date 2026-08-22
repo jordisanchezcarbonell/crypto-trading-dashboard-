@@ -6,9 +6,11 @@ import { MetricStrip, type Metric } from "@/components/ui/MetricStrip";
 import { Stat } from "@/components/ui/Stat";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { EquityCurveChart } from "@/components/charts/EquityCurveChart";
+import { Sparkline } from "@/components/charts/Sparkline";
 import { DrawdownChart } from "@/components/charts/DrawdownChart";
 import { PnLBarChart } from "@/components/charts/PnLBarChart";
 import { useDashboard } from "@/lib/providers/DashboardProvider";
+import { describeSeries } from "@/lib/domain/series";
 import {
   formatOptionalNumber,
   formatOptionalPct,
@@ -89,6 +91,19 @@ export default function PerformancePage() {
                 : "negative"
           }
           caption={`${formatUsd(performance.currentEquityUsd)} equity now`}
+          aside={
+            <Sparkline
+              values={equityCurve.map((p) => p.equityUsd)}
+              tone={
+                performance.totalReturnPct == null
+                  ? "accent"
+                  : performance.totalReturnPct >= 0
+                    ? "positive"
+                    : "negative"
+              }
+              className="h-14 w-full max-w-[280px]"
+            />
+          }
         />
         <Stat
           size="sm"
@@ -105,10 +120,13 @@ export default function PerformancePage() {
         />
       </div>
 
-      <MetricStrip metrics={qualityMetrics} />
+      <MetricStrip
+        metrics={qualityMetrics}
+        emptyHint="Trade quality metrics — risk ratios and the per-trade distribution — are computed from closed trades. They appear once this run closes its first position."
+      />
 
       <Card>
-        <CardHeader title="Equity curve" />
+        <CardHeader title="Equity curve" subtitle={describeSeries(equityCurve)} />
         <CardBody>
           <EquityCurveChart points={equityCurve} height={300} />
         </CardBody>

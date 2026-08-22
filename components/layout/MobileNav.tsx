@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { NAV, isActive } from "./nav";
+import { SHELL_WIDTH } from "./shell";
 
 /** Horizontal scroller that replaces the sidebar below the `lg` breakpoint. */
 export function MobileNav() {
@@ -12,7 +13,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Main"
-      className="flex gap-1 overflow-x-auto border-b border-line bg-surface/60 px-4 py-2 backdrop-blur-sm lg:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className={`${SHELL_WIDTH} flex gap-1 overflow-x-auto border-b border-line bg-surface/60 py-2 backdrop-blur-sm lg:hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
     >
       {NAV.map(({ href, label, Icon }) => {
         const active = isActive(pathname, href);

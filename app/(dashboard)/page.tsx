@@ -6,9 +6,11 @@ import { HeroStat } from "@/components/ui/HeroStat";
 import { MetricStrip, type Metric } from "@/components/ui/MetricStrip";
 import { Stat } from "@/components/ui/Stat";
 import { EquityCurveChart } from "@/components/charts/EquityCurveChart";
+import { Sparkline } from "@/components/charts/Sparkline";
 import { DecisionsTimeline } from "@/components/tables/DecisionsTimeline";
 import { PositionsTable } from "@/components/tables/PositionsTable";
 import { useDashboard } from "@/lib/providers/DashboardProvider";
+import { describeSeries } from "@/lib/domain/series";
 import {
   formatOptionalNumber,
   formatOptionalPct,
@@ -54,7 +56,10 @@ export default function OverviewPage() {
       value: formatOptionalSignedPct(performance.cagrPct),
       tone: performance.cagrPct == null ? "neutral" : "default",
     },
-    { label: "Trades", value: performance.totalTrades },
+    // "Trades" is deliberately absent: the closed-trade count is already the
+    // second clause of the page description, one line above. It was also the
+    // only entry that could hold a real value while the other five were
+    // unknown, which kept the strip alive to say nothing.
   ];
 
   return (
@@ -65,7 +70,7 @@ export default function OverviewPage() {
           this description reports the shape of the data instead. */}
       <PageHeader
         title="Overview"
-        description={`${equityCurve.length} days of equity · ${performance.totalTrades} closed trades · ${positions.length} open`}
+        description={`${describeSeries(equityCurve)} of equity · ${performance.totalTrades} closed trades · ${positions.length} open`}
       />
 
       {/* One figure leads. Equity is what the reader came for; everything
@@ -84,6 +89,19 @@ export default function OverviewPage() {
                 : "negative"
           }
           caption={`From ${formatOptionalUsd(performance.startingCapitalUsd)} starting capital`}
+          aside={
+            <Sparkline
+              values={equityCurve.map((p) => p.equityUsd)}
+              tone={
+                performance.totalReturnPct == null
+                  ? "accent"
+                  : performance.totalReturnPct >= 0
+                    ? "positive"
+                    : "negative"
+              }
+              className="h-14 w-full max-w-[280px]"
+            />
+          }
         />
         <Stat
           size="sm"
@@ -101,15 +119,18 @@ export default function OverviewPage() {
         />
       </div>
 
-      <MetricStrip metrics={riskMetrics} />
+      <MetricStrip
+        metrics={riskMetrics}
+        emptyHint="Risk metrics — Sharpe, Sortino, win rate, profit factor, CAGR — are computed from closed trades. They appear once this run closes its first position."
+      />
 
       <Card>
         <CardHeader
           title="Equity curve"
-          subtitle={`${equityCurve.length} daily points`}
+          subtitle={describeSeries(equityCurve)}
         />
         <CardBody>
-          <EquityCurveChart points={equityCurve} height={280} />
+          <EquityCurveChart points={equityCurve} height={340} />
         </CardBody>
       </Card>
 

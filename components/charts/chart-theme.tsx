@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { isIntradaySeries, type TimePoint } from "@/lib/domain/series";
+import { formatDate, formatDateTime, formatTime } from "@/lib/format";
 
 /**
  * Chart styling shared by every recharts surface. Values mirror the CSS tokens
@@ -29,6 +31,28 @@ export const gridProps = {
 } as const;
 
 export const chartMargin = { top: 8, right: 8, left: 0, bottom: 0 } as const;
+
+/**
+ * Tick and tooltip formatters for a time axis, chosen from the series itself.
+ *
+ * Every chart here used to hardcode `formatDate(v).slice(5)` — a bare `MM-dd`.
+ * That is only readable when the points really are one per day. Five snapshots
+ * taken the same afternoon rendered as `08-22, 08-22, 08-22, 08-22`: four
+ * ticks that name the same day and distinguish nothing. Ask the data which
+ * unit it varies in, then label in that unit.
+ */
+export function timeAxis(points: TimePoint[]) {
+  const intraday = isIntradaySeries(points);
+
+  return {
+    /** Axis ticks: short, because they repeat across the width of the chart. */
+    tickFormatter: (value: unknown) =>
+      intraday ? formatTime(String(value)) : formatDate(String(value)).slice(5),
+    /** Tooltip heading: one at a time, so it can afford to be unambiguous. */
+    labelFormatter: (value: string | number) =>
+      intraday ? formatDateTime(String(value)) : formatDate(String(value)),
+  };
+}
 
 type TooltipEntry = {
   name?: string | number;

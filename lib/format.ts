@@ -127,3 +127,30 @@ export function pnlToneClassOptional(value: number | null | undefined): string {
   if (value == null) return "text-muted";
   return pnlToneClass(value);
 }
+
+/** Clock time only — for axes and labels whose date is already established. */
+export function formatTime(iso: string): string {
+  return format(new Date(iso), "HH:mm");
+}
+
+/**
+ * A signal value as a human reads it.
+ *
+ * Signals arrive straight from the exporter as IEEE doubles, so an EMA lands
+ * in the payload as 65669.30417490489. Printing that verbatim spends fourteen
+ * characters asserting a precision the strategy never had, and makes a row of
+ * chips unscannable. Precision scales with magnitude: a price needs cents, a
+ * sub-dollar quantity needs more places to say anything at all.
+ *
+ * Non-numeric signals ("long", "n/a") pass through untouched.
+ */
+export function formatSignalValue(value: unknown): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return String(value);
+
+  const abs = Math.abs(value);
+  const digits = abs >= 1000 ? 2 : abs >= 1 ? 4 : 6;
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: digits,
+  });
+}

@@ -24,13 +24,21 @@ describe("<DecisionsTimeline />", () => {
     expect(screen.getByText(/75%/)).toBeInTheDocument();
   });
 
-  it("renders em-dash for null confidence, NOT 0%", () => {
+  it("omits confidence entirely when null, and never renders 0%", () => {
     const nullConfidence: Decision = { ...baseDecision, confidence: null };
     render(<DecisionsTimeline decisions={[nullConfidence]} />);
-    // The label "confidence —" must appear (with em dash).
-    expect(screen.getByText(new RegExp(`confidence.*${UNAVAILABLE}`))).toBeInTheDocument();
-    // Regression: no 0% rendered for the unknown case.
-    expect(screen.queryByText(/^0%$/)).toBeNull();
+
+    // The invariant that matters is unchanged and still asserted: an unknown
+    // confidence must never be shown as a real zero.
+    expect(screen.queryByText(/0%/)).toBeNull();
+
+    // What changed is how "unknown" is expressed here. The strategies that
+    // have no confidence have none on any bar, so "confidence —" printed on
+    // every card in the column — a label repeated down the page to announce
+    // an absence. An omitted pair cannot be misread as zero either, and the
+    // card below still proves a real 0 renders as 0%.
+    expect(screen.queryByText(/confidence/i)).toBeNull();
+    expect(screen.queryByText(UNAVAILABLE)).toBeNull();
   });
 
   it("dates a decision by when it became knowable, not by its feature bar", () => {
@@ -82,10 +90,16 @@ describe("<DecisionsTimeline />", () => {
     // what let a decision that could not be known until 12:00 read as
     // though it had been made at 08:00.
     expect(container.innerHTML).not.toContain("2026-08-22T08:00:00.000Z");
-    expect(screen.getByText(UNAVAILABLE)).toBeInTheDocument();
     expect(container.innerHTML).not.toContain("undefined");
 
-    // The bar survives one line down as provenance, still marked.
+    // The slot is empty rather than holding an em dash. A lone dash above
+    // the bar line spent a whole line announcing an absence that the line
+    // beneath already names — and on these rows, every row had one.
+    expect(screen.queryByText(UNAVAILABLE)).toBeNull();
+
+    // What replaces it is the thing that always mattered: the surviving
+    // timestamp is labelled as the bar and explicitly marked unavailable,
+    // so it cannot be read as when the decision was made.
     expect(screen.getByText(/availability n\/a/)).toBeInTheDocument();
     expect(screen.getByText(/bar /)).toBeInTheDocument();
     expect(screen.queryByText("(bar)")).toBeNull();
