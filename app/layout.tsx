@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Crypto Trading Dashboard",
-  description: "RUN-3 paper trading — read-only observability dashboard",
+  description: "Read-only observability dashboard for the trading lab",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

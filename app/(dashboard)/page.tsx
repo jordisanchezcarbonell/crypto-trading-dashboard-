@@ -15,7 +15,7 @@ import {
 } from "@/lib/format";
 
 export default function OverviewPage() {
-  const { snapshot } = useDashboard();
+  const { snapshot, source } = useDashboard();
   const {
     performance,
     equityCurve,
@@ -29,7 +29,7 @@ export default function OverviewPage() {
     <div className="space-y-6">
       <PageHeader
         title="Overview"
-        description="Snapshot of RUN-3 paper trading — data from local mocks."
+        description={`Snapshot of ${snapshot.runId} — read via ${source === "supabase" ? "Supabase" : "local mock"} (read-only).`}
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

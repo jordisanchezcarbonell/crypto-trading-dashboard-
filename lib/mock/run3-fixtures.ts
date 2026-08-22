@@ -308,7 +308,7 @@ const comparisons: ComparisonSeries[] = (() => {
     points: [] as { timestamp: string; valueIndexed: number }[],
   };
   const runSeries = {
-    label: "RUN-3",
+    label: "RUN-3-DEMO",
     color: "#22d3ee",
     points: [] as { timestamp: string; valueIndexed: number }[],
   };
