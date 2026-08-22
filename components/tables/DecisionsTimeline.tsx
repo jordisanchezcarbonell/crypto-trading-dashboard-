@@ -112,13 +112,32 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                     </Badge>
                   )}
                 </div>
-                <time
-                  className='num text-[11px] text-faint'
-                  dateTime={d.timestamp}
-                  suppressHydrationWarning
-                >
-                  {formatRelative(d.timestamp)}
-                </time>
+                <div className='flex flex-col items-end text-right'>
+                  <time
+                    className='num text-[11px] text-faint'
+                    dateTime={decidedAt(d)}
+                    title={
+                      d.signalAvailableAt
+                        ? `Signal available at ${formatDateTime(d.signalAvailableAt)}`
+                        : `Availability not exported for this decision; showing its feature bar (${formatDateTime(d.timestamp)})`
+                    }
+                    suppressHydrationWarning
+                  >
+                    {formatRelative(decidedAt(d))}
+                    {d.signalAvailableAt === null && (
+                      <span className='ml-1 text-faint/70'>(bar)</span>
+                    )}
+                  </time>
+                  {/* The feature bar stays visible as provenance: it says
+                      which candle produced the signal, which is genuinely
+                      useful, but it is never the headline time. */}
+                  <span
+                    className='num text-[10px] text-faint/70'
+                    suppressHydrationWarning
+                  >
+                    bar {formatDateTime(d.timestamp)}
+                  </span>
+                </div>
               </div>
 
               <p className='mt-2 text-sm leading-relaxed text-muted'>

@@ -67,19 +67,62 @@ export function Header() {
           </span>
         </Meta>
         <Divider />
-        <Meta label='Last sync'>
+        {/* This slot used to render `health.lastSync`, which is the last
+            feature BAR the runner processed, not an exporter sync. On a 4h
+            timeframe it reads "3 hours ago" even when the replica was
+            written seconds ago. The FreshnessPill above already answers the
+            freshness question from `generated_at`, so this now shows the
+            runner cadence, which is what it was really reporting. */}
+        <Meta label='Last processing'>
           <span className='num text-ink' suppressHydrationWarning>
-            {formatRelative(health.lastSync)}
+            {processing.lastProcessingAt === null
+              ? UNAVAILABLE
+              : formatRelative(processing.lastProcessingAt)}
           </span>
         </Meta>
         <Divider />
-        <Meta label='Next run'>
-          <span className='num text-ink' suppressHydrationWarning>
-            {formatRelative(health.nextProcessing)}
-          </span>
+        <Meta label='Next processing'>
+          <NextProcessingValue
+            state={processing.state}
+            deltaSeconds={processing.deltaSeconds}
+          />
         </Meta>
       </dl>
     </header>
+  );
+}
+
+/**
+ * The cadence value, which must never flatter a late runner.
+ *
+ * An overdue deadline is rendered as overdue. We do not advance it by whole
+ * timeframes until it lands in the future: a deadline in the past is the
+ * evidence that a bar went unprocessed, and rolling it forward would turn a
+ * missed execution into a healthy-looking countdown.
+ */
+function NextProcessingValue({
+  state,
+  deltaSeconds,
+}: {
+  state: 'due' | 'overdue' | 'unknown';
+  deltaSeconds: number | null;
+}) {
+  if (state === 'unknown' || deltaSeconds === null) {
+    return <span className='num text-muted'>{UNAVAILABLE}</span>;
+  }
+
+  if (state === 'overdue') {
+    return (
+      <Badge tone='warning' className='tracking-wider'>
+        {formatDuration(deltaSeconds)} OVERDUE
+      </Badge>
+    );
+  }
+
+  return (
+    <span className='num text-ink' suppressHydrationWarning>
+      in {formatDuration(deltaSeconds)}
+    </span>
   );
 }
 
