@@ -44,3 +44,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude code
+# `.claude/worktrees/*` are git worktrees, so each one carries its own .git.
+# Without this rule `git add -A` records the directory as a gitlink (mode
+# 160000) with no .gitmodules to resolve it — a fresh clone then gets an
+# empty directory and a submodule git reports as permanently modified.
+# Settings marked `.local` are per-machine by convention; a shared
+# .claude/settings.json is still tracked.
+.claude/worktrees/
+.claude/settings.local.json
