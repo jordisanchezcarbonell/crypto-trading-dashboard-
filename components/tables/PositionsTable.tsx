@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/Badge";
 import { DataTable, type Column } from "./DataTable";
 import type { Position } from "@/lib/domain/schemas";
 import {
+  formatOptionalUsd,
   formatQty,
   formatRelative,
   formatSignedPct,
@@ -30,13 +31,13 @@ const columns: Column<Position>[] = [
     key: "entry",
     header: "Entry",
     align: "right",
-    render: (r) => formatUsd(r.entryPrice),
+    render: (r) => formatOptionalUsd(r.entryPrice),
   },
   {
     key: "mark",
     header: "Mark",
     align: "right",
-    render: (r) => formatUsd(r.markPrice),
+    render: (r) => formatOptionalUsd(r.markPrice),
   },
   {
     key: "notional",

@@ -16,8 +16,11 @@ export const PositionSchema = z.object({
   symbol: z.string(),
   side: SideSchema,
   qty: z.number(),
-  entryPrice: z.number().nonnegative(),
-  markPrice: z.number().nonnegative(),
+  // Nullable: some data sources cannot always supply a live entry/mark
+  // price. `null` means "unknown"; a number is always the real value. The
+  // UI must render null as "—" / "N/A", NEVER as 0.
+  entryPrice: z.number().nonnegative().nullable(),
+  markPrice: z.number().nonnegative().nullable(),
   notionalUsd: z.number(),
   unrealizedPnlUsd: z.number(),
   unrealizedPnlPct: z.number(),
@@ -59,7 +62,14 @@ export const DecisionSchema = z.object({
   timestamp: IsoDateTime,
   symbol: z.string(),
   action: DecisionActionSchema,
-  confidence: z.number().min(0).max(1),
+  // Nullable: deterministic strategies (EMA-v1, EMA-v2-risk) have no
+  // probabilistic confidence. `null` means "not applicable". Renderers
+  // must display "—", NOT 0%.
+  confidence: z.number().min(0).max(1).nullable(),
+  // `rationale` is a human-readable summary. When the source is the
+  // exporter, this string is DERIVED from the persisted decision fields
+  // (ema50/ema200/target/…), NOT a rationale stored by the strategy and
+  // NOT an ML explanation.
   rationale: z.string(),
   signals: z.array(
     z.object({
@@ -79,19 +89,28 @@ export const EquityPointSchema = z.object({
 export type EquityPoint = z.infer<typeof EquityPointSchema>;
 
 export const PerformanceSummarySchema = z.object({
-  startingCapitalUsd: z.number().nonnegative(),
+  // Rules of the road for this object:
+  //
+  //   `null` == "unknown / not enough data yet"
+  //   `0`    == "computed and the answer is genuinely zero"
+  //
+  // Any field whose value depends on a return series or a trade sample is
+  // nullable, because until we have enough bars/trades those metrics are
+  // undefined and reporting 0 would be indistinguishable from a real 0
+  // result. The UI must render `null` as "—" / "N/A", never as 0.
+  startingCapitalUsd: z.number().nonnegative().nullable(),
   currentEquityUsd: z.number().nonnegative(),
-  totalReturnPct: z.number(),
-  cagrPct: z.number(),
-  sharpe: z.number(),
-  sortino: z.number(),
-  maxDrawdownPct: z.number().max(0),
-  winRatePct: z.number().min(0).max(100),
-  profitFactor: z.number().nonnegative(),
-  avgTradePct: z.number(),
+  totalReturnPct: z.number().nullable(),
+  cagrPct: z.number().nullable(),
+  sharpe: z.number().nullable(),
+  sortino: z.number().nullable(),
+  maxDrawdownPct: z.number().max(0).nullable(),
+  winRatePct: z.number().min(0).max(100).nullable(),
+  profitFactor: z.number().nonnegative().nullable(),
+  avgTradePct: z.number().nullable(),
   totalTrades: z.number().int().nonnegative(),
-  bestTradePct: z.number(),
-  worstTradePct: z.number(),
+  bestTradePct: z.number().nullable(),
+  worstTradePct: z.number().nullable(),
 });
 export type PerformanceSummary = z.infer<typeof PerformanceSummarySchema>;
 
@@ -128,8 +147,11 @@ export const StrategyStatusSchema = z.object({
   status: HealthStatusSchema,
   openPositions: z.number().int().nonnegative(),
   equityUsd: z.number().nonnegative(),
-  dayPnlUsd: z.number(),
-  dayPnlPct: z.number(),
+  // Nullable: computing today's PnL requires a baseline equity point from
+  // the previous UTC midnight. Until the strategy has been alive long
+  // enough for that bar to exist, both fields are `null` (unknown).
+  dayPnlUsd: z.number().nullable(),
+  dayPnlPct: z.number().nullable(),
   lastDecisionAt: IsoDateTime,
 });
 export type StrategyStatus = z.infer<typeof StrategyStatusSchema>;

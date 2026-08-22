@@ -1,6 +1,6 @@
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import type { Decision, DecisionAction } from "@/lib/domain/schemas";
-import { formatPct, formatRelative } from "@/lib/format";
+import { UNAVAILABLE, formatPct, formatRelative } from "@/lib/format";
 
 const ACTION_TONE: Record<DecisionAction, BadgeTone> = {
   open_long: "success",
@@ -49,7 +49,10 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                 {d.symbol}
               </span>
               <span className="text-xs text-zinc-500">
-                confidence {formatPct(d.confidence * 100, 0)}
+                confidence{" "}
+                {d.confidence == null
+                  ? UNAVAILABLE
+                  : formatPct(d.confidence * 100, 0)}
               </span>
               {!d.executed && (
                 <Badge tone="muted" className="text-[10px]">

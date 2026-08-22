@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
+  UNAVAILABLE,
+  formatOptionalNumber,
+  formatOptionalPct,
+  formatOptionalSignedPct,
+  formatOptionalUsd,
   formatPct,
   formatQty,
   formatSignedPct,
   formatSignedUsd,
   formatUsd,
   pnlToneClass,
+  pnlToneClassOptional,
 } from "@/lib/format";
 
 describe("format helpers", () => {
@@ -38,5 +44,43 @@ describe("format helpers", () => {
     expect(pnlToneClass(10)).toContain("emerald");
     expect(pnlToneClass(-1)).toContain("rose");
     expect(pnlToneClass(0)).toContain("zinc");
+  });
+});
+
+describe("optional formatters — null is unknown, not zero", () => {
+  it("distinguishes real 0 from unknown", () => {
+    // Real zero → formatted number.
+    expect(formatOptionalUsd(0)).toBe("$0.00");
+    expect(formatOptionalPct(0)).toBe("0.00%");
+    // formatSignedPct's existing convention: no '+' prefix for exact zero.
+    expect(formatOptionalSignedPct(0)).toBe("0.00%");
+    expect(formatOptionalNumber(0)).toBe("0.00");
+    // Unknown → em dash, NEVER 0.
+    expect(formatOptionalUsd(null)).toBe(UNAVAILABLE);
+    expect(formatOptionalUsd(undefined)).toBe(UNAVAILABLE);
+    expect(formatOptionalPct(null)).toBe(UNAVAILABLE);
+    expect(formatOptionalSignedPct(null)).toBe(UNAVAILABLE);
+    expect(formatOptionalNumber(null)).toBe(UNAVAILABLE);
+    // Regression: unknown must not stringify as "0", "$0", "0%", …
+    for (const rendering of [
+      formatOptionalUsd(null),
+      formatOptionalPct(null),
+      formatOptionalSignedPct(null),
+      formatOptionalNumber(null),
+    ]) {
+      expect(rendering).not.toMatch(/^[-+]?0/);
+    }
+  });
+
+  it("keeps sign for negative values (real, not unknown)", () => {
+    expect(formatOptionalSignedPct(-4.2)).toBe("-4.20%");
+    expect(formatOptionalUsd(-100)).toBe("-$100.00");
+  });
+
+  it("treats unknown as neutral tone, not positive-of-zero", () => {
+    expect(pnlToneClassOptional(null)).toContain("zinc");
+    expect(pnlToneClassOptional(undefined)).toContain("zinc");
+    expect(pnlToneClassOptional(0)).toContain("zinc");
+    expect(pnlToneClassOptional(1)).toContain("emerald");
   });
 });

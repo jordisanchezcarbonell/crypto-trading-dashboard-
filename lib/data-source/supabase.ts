@@ -246,19 +246,24 @@ function emptyHealth(): HealthSnapshot {
 }
 
 function emptyPerformance(): PerformanceSummary {
+  // Every derived metric is `null` (== unknown) because we have no
+  // system_snapshots row yet. `totalTrades` and `currentEquityUsd` are the
+  // only fields whose true baseline value is 0 when there is nothing to
+  // report; every other metric would be undefined without a return series
+  // or a trade sample, so we refuse to fabricate zeros.
   return {
-    startingCapitalUsd: 0,
+    startingCapitalUsd: null,
     currentEquityUsd: 0,
-    totalReturnPct: 0,
-    cagrPct: 0,
-    sharpe: 0,
-    sortino: 0,
-    maxDrawdownPct: 0,
-    winRatePct: 0,
-    profitFactor: 0,
-    avgTradePct: 0,
+    totalReturnPct: null,
+    cagrPct: null,
+    sharpe: null,
+    sortino: null,
+    maxDrawdownPct: null,
+    winRatePct: null,
+    profitFactor: null,
+    avgTradePct: null,
     totalTrades: 0,
-    bestTradePct: 0,
-    worstTradePct: 0,
+    bestTradePct: null,
+    worstTradePct: null,
   };
 }

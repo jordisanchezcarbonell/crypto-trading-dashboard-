@@ -39,8 +39,10 @@ export const StrategySnapshotRowSchema = z.object({
   status: z.enum(["ok", "degraded", "down"]),
   open_positions: z.number().int().nonnegative(),
   equity_usd: z.number().nonnegative(),
-  day_pnl_usd: z.number(),
-  day_pnl_pct: z.number(),
+  // Nullable — see lib/domain/schemas.ts. Cannot compute day PnL without
+  // a UTC-midnight baseline bar.
+  day_pnl_usd: z.number().nullable(),
+  day_pnl_pct: z.number().nullable(),
   last_decision_at: z.string(),
 });
 export type StrategySnapshotRow = z.infer<typeof StrategySnapshotRowSchema>;
@@ -53,8 +55,9 @@ export const PositionSnapshotRowSchema = z.object({
   ts: z.string(),
   side: z.enum(["long", "short"]),
   qty: z.number(),
-  entry_price: z.number().nonnegative(),
-  mark_price: z.number().nonnegative(),
+  // See lib/domain/schemas.ts — `null` means unknown, NOT zero.
+  entry_price: z.number().nonnegative().nullable(),
+  mark_price: z.number().nonnegative().nullable(),
   notional_usd: z.number(),
   unrealized_pnl_usd: z.number(),
   unrealized_pnl_pct: z.number(),
@@ -95,7 +98,8 @@ export const DecisionRowSchema = z.object({
     "scale_out",
     "skip",
   ]),
-  confidence: z.number().min(0).max(1),
+  // Nullable — deterministic strategies have no probabilistic confidence.
+  confidence: z.number().min(0).max(1).nullable(),
   rationale: z.string(),
   signals: z.array(
     z.object({

@@ -57,3 +57,49 @@ export function pnlToneClass(value: number): string {
   if (value < 0) return "text-rose-400";
   return "text-zinc-400";
 }
+
+// -----------------------------------------------------------------------------
+// Optional formatters — render `null`/`undefined` as an em dash instead of 0.
+//
+// Convention across this repo:
+//   `null` == "unknown / not enough data"
+//   a number == "computed" (0 included, means the answer is truly zero)
+//
+// The unavailable glyph is Unicode em dash (U+2014). Never coerce to 0.
+// -----------------------------------------------------------------------------
+
+export const UNAVAILABLE = "—";
+
+export function formatOptionalUsd(
+  value: number | null | undefined,
+  opts?: { compact?: boolean }
+): string {
+  return value == null ? UNAVAILABLE : formatUsd(value, opts);
+}
+
+export function formatOptionalPct(
+  value: number | null | undefined,
+  digits = 2
+): string {
+  return value == null ? UNAVAILABLE : formatPct(value, digits);
+}
+
+export function formatOptionalSignedPct(
+  value: number | null | undefined,
+  digits = 2
+): string {
+  return value == null ? UNAVAILABLE : formatSignedPct(value, digits);
+}
+
+export function formatOptionalNumber(
+  value: number | null | undefined,
+  digits = 2
+): string {
+  return value == null ? UNAVAILABLE : value.toFixed(digits);
+}
+
+/** For UI tone helpers: treat null as neutral, not positive or negative. */
+export function pnlToneClassOptional(value: number | null | undefined): string {
+  if (value == null) return "text-zinc-400";
+  return pnlToneClass(value);
+}

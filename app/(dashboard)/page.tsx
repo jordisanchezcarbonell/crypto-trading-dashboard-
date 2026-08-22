@@ -8,8 +8,10 @@ import { DecisionsTimeline } from "@/components/tables/DecisionsTimeline";
 import { PositionsTable } from "@/components/tables/PositionsTable";
 import { useDashboard } from "@/lib/providers/DashboardProvider";
 import {
-  formatPct,
-  formatSignedPct,
+  formatOptionalNumber,
+  formatOptionalPct,
+  formatOptionalSignedPct,
+  formatOptionalUsd,
   formatSignedUsd,
   formatUsd,
 } from "@/lib/format";
@@ -36,19 +38,25 @@ export default function OverviewPage() {
         <Stat
           label="Equity"
           value={formatUsd(performance.currentEquityUsd)}
-          hint={`Starting capital ${formatUsd(performance.startingCapitalUsd)}`}
+          hint={`Starting capital ${formatOptionalUsd(performance.startingCapitalUsd)}`}
         />
         <Stat
           label="Total return"
-          value={formatSignedPct(performance.totalReturnPct)}
-          tone={performance.totalReturnPct >= 0 ? "positive" : "negative"}
-          hint={`CAGR ${formatSignedPct(performance.cagrPct)}`}
+          value={formatOptionalSignedPct(performance.totalReturnPct)}
+          tone={
+            performance.totalReturnPct == null
+              ? "neutral"
+              : performance.totalReturnPct >= 0
+                ? "positive"
+                : "negative"
+          }
+          hint={`CAGR ${formatOptionalSignedPct(performance.cagrPct)}`}
         />
         <Stat
           label="Max drawdown"
-          value={formatPct(performance.maxDrawdownPct)}
-          tone="negative"
-          hint={`Sharpe ${performance.sharpe.toFixed(2)} · Sortino ${performance.sortino.toFixed(2)}`}
+          value={formatOptionalPct(performance.maxDrawdownPct)}
+          tone={performance.maxDrawdownPct == null ? "neutral" : "negative"}
+          hint={`Sharpe ${formatOptionalNumber(performance.sharpe)} · Sortino ${formatOptionalNumber(performance.sortino)}`}
         />
         <Stat
           label="Open uPnL"

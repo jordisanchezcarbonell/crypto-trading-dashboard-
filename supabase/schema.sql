@@ -1,6 +1,17 @@
 -- ROLE key, which bypasses RLS by design. That key must NEVER be present in
 -- the dashboard's runtime environment (Vercel, local `next dev`, etc.).
 -- ---------------------------------------------------------------------------
+--
+-- Table definitions live in the initial Supabase migration bootstrap (not
+-- checked into this repo). Follow-on schema evolutions live under
+-- `supabase/migrations/`. Currently applied migrations:
+--
+--   001_nullable_metrics.sql — decisions.confidence,
+--                              position_snapshots.mark_price / entry_price,
+--                              strategy_snapshots.day_pnl_usd / day_pnl_pct
+--                              become NULL-able so the exporter can emit
+--                              "unknown" without fabricating zeros.
+-- ---------------------------------------------------------------------------
 
 alter table runs                enable row level security;
 alter table strategy_snapshots  enable row level security;

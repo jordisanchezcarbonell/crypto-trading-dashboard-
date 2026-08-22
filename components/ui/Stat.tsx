@@ -5,7 +5,10 @@ export interface StatProps {
   label: string;
   value: ReactNode;
   hint?: ReactNode;
-  tone?: "default" | "positive" | "negative" | "warning";
+  // `neutral` is for "unknown / not applicable" values (the em-dash case).
+  // Distinct from `default` (bright white) so the user does not confuse an
+  // absent metric with a real number close to zero.
+  tone?: "default" | "positive" | "negative" | "warning" | "neutral";
 }
 
 const toneClass: Record<NonNullable<StatProps["tone"]>, string> = {
@@ -13,6 +16,7 @@ const toneClass: Record<NonNullable<StatProps["tone"]>, string> = {
   positive: "text-emerald-400",
   negative: "text-rose-400",
   warning: "text-amber-400",
+  neutral: "text-zinc-400",
 };
 
 export function Stat({ label, value, hint, tone = "default" }: StatProps) {

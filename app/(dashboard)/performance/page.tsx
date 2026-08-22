@@ -8,8 +8,9 @@ import { DrawdownChart } from "@/components/charts/DrawdownChart";
 import { PnLBarChart } from "@/components/charts/PnLBarChart";
 import { useDashboard } from "@/lib/providers/DashboardProvider";
 import {
-  formatPct,
-  formatSignedPct,
+  formatOptionalNumber,
+  formatOptionalPct,
+  formatOptionalSignedPct,
   formatUsd,
 } from "@/lib/format";
 
@@ -28,38 +29,53 @@ export default function PerformancePage() {
         <Stat label="Equity" value={formatUsd(performance.currentEquityUsd)} />
         <Stat
           label="Total return"
-          value={formatSignedPct(performance.totalReturnPct)}
-          tone={performance.totalReturnPct >= 0 ? "positive" : "negative"}
+          value={formatOptionalSignedPct(performance.totalReturnPct)}
+          tone={
+            performance.totalReturnPct == null
+              ? "neutral"
+              : performance.totalReturnPct >= 0
+                ? "positive"
+                : "negative"
+          }
         />
         <Stat
           label="CAGR"
-          value={formatSignedPct(performance.cagrPct)}
-          tone={performance.cagrPct >= 0 ? "positive" : "negative"}
+          value={formatOptionalSignedPct(performance.cagrPct)}
+          tone={
+            performance.cagrPct == null
+              ? "neutral"
+              : performance.cagrPct >= 0
+                ? "positive"
+                : "negative"
+          }
         />
         <Stat
           label="Max DD"
-          value={formatPct(performance.maxDrawdownPct)}
-          tone="negative"
+          value={formatOptionalPct(performance.maxDrawdownPct)}
+          tone={performance.maxDrawdownPct == null ? "neutral" : "negative"}
         />
-        <Stat label="Sharpe" value={performance.sharpe.toFixed(2)} />
-        <Stat label="Sortino" value={performance.sortino.toFixed(2)} />
+        <Stat label="Sharpe" value={formatOptionalNumber(performance.sharpe)} />
+        <Stat label="Sortino" value={formatOptionalNumber(performance.sortino)} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Stat label="Win rate" value={formatPct(performance.winRatePct, 1)} />
+        <Stat
+          label="Win rate"
+          value={formatOptionalPct(performance.winRatePct, 1)}
+        />
         <Stat
           label="Profit factor"
-          value={performance.profitFactor.toFixed(2)}
+          value={formatOptionalNumber(performance.profitFactor)}
         />
         <Stat
           label="Best trade"
-          value={formatSignedPct(performance.bestTradePct)}
-          tone="positive"
+          value={formatOptionalSignedPct(performance.bestTradePct)}
+          tone={performance.bestTradePct == null ? "neutral" : "positive"}
         />
         <Stat
           label="Worst trade"
-          value={formatSignedPct(performance.worstTradePct)}
-          tone="negative"
+          value={formatOptionalSignedPct(performance.worstTradePct)}
+          tone={performance.worstTradePct == null ? "neutral" : "negative"}
         />
       </div>
 
