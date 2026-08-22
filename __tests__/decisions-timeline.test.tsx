@@ -73,8 +73,11 @@ describe("<DecisionsTimeline />", () => {
     const { container } = render(<DecisionsTimeline decisions={[legacy]} />);
     const time = container.querySelector("time");
     expect(time?.getAttribute("dateTime")).toBe("2026-08-22T08:00:00.000Z");
-    // The fallback is marked, never passed off as a real decision time.
-    expect(screen.getByText("(bar)")).toBeInTheDocument();
+    // The fallback is marked, never passed off as a real decision time. The
+    // caveat rides on the provenance line rather than being repeated next to
+    // the headline, which used to render "(bar) … bar <date>".
+    expect(screen.getByText(/availability n\/a/)).toBeInTheDocument();
+    expect(screen.queryByText("(bar)")).toBeNull();
   });
 
   it("keeps rendering when confidence is a real 0 (edge case)", () => {

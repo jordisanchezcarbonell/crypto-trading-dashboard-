@@ -127,18 +127,21 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                     suppressHydrationWarning
                   >
                     {formatRelative(decidedAt(d))}
-                    {d.signalAvailableAt === null && (
-                      <span className='ml-1 text-faint/70'>(bar)</span>
-                    )}
                   </time>
-                  {/* The feature bar stays visible as provenance: it says
-                      which candle produced the signal, which is genuinely
-                      useful, but it is never the headline time. */}
+                  {/* The feature bar stays visible as provenance — which
+                      candle produced the signal is genuinely useful — but it
+                      is never the headline time.
+
+                      When availability was never exported the headline IS
+                      the bar, and the caveat belongs on this line. Marking
+                      it in both places made every row read "(bar) … bar",
+                      which says the word twice and explains it once. */}
                   <span
                     className='num text-[10px] text-faint/70'
                     suppressHydrationWarning
                   >
                     bar {formatDateTime(d.timestamp)}
+                    {d.signalAvailableAt === null && ' · availability n/a'}
                   </span>
                 </div>
               </div>

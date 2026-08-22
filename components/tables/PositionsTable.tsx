@@ -85,17 +85,32 @@ const columns: Column<Position>[] = [
   },
 ];
 
+/**
+ * The columns a summary card can actually fit.
+ *
+ * `hideBelow` drops columns by VIEWPORT width, which is the wrong question
+ * when the table sits in a two-of-three-column card: on a wide screen every
+ * breakpoint is satisfied, all nine columns render, and they overflow the
+ * narrow container instead — clipping uPnL, the one column worth showing.
+ * A summary card gets a summary; the full table lives on /positions.
+ */
+const COMPACT_KEYS = new Set(["symbol", "side", "qty", "mark", "pnl"]);
+const compactColumns = columns.filter((c) => COMPACT_KEYS.has(c.key));
+
 export function PositionsTable({
   positions,
   frame,
+  compact = false,
 }: {
   positions: Position[];
   frame?: boolean;
+  /** Summary view for a narrow container — see COMPACT_KEYS. */
+  compact?: boolean;
 }) {
   return (
     <DataTable
       rows={positions}
-      columns={columns}
+      columns={compact ? compactColumns : columns}
       rowKey={(p) => p.id}
       emptyLabel="No open positions"
       emptyHint="Positions appear here once a strategy opens one."

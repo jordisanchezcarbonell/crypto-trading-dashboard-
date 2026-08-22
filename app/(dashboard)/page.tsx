@@ -116,11 +116,16 @@ export default function OverviewPage() {
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <Card>
-            <CardHeader title="Open positions" />
+            <CardHeader
+              title="Open positions"
+              subtitle="Symbol, size, mark and unrealized PnL — full detail on Positions"
+            />
             {/* `frame={false}`: the table is already inside a Card, and its
-                own chrome would stack a second hairline on the first. */}
+                own chrome would stack a second hairline on the first.
+                `compact`: this card is two of three columns wide, and the
+                full nine-column table overflows it and clips uPnL. */}
             <CardBody className="px-0 py-0">
-              <PositionsTable positions={positions} frame={false} />
+              <PositionsTable positions={positions} frame={false} compact />
             </CardBody>
           </Card>
         </div>

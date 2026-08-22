@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { type BadgeTone } from "./Badge";
+import { formatDuration } from "@/lib/format";
 import type { Freshness } from "@/lib/domain/schemas";
 
 const LEVEL_TONE: Record<Freshness["level"], BadgeTone> = {
@@ -29,10 +30,13 @@ const RING: Record<BadgeTone, string> = {
 export function FreshnessPill({ freshness }: { freshness: Freshness }) {
   const tone = LEVEL_TONE[freshness.level];
   const label = LEVEL_LABEL[freshness.level];
+  // Raw seconds are unreadable past a minute or two — "19896s since last
+  // snapshot" tells a human nothing, and this pill exists precisely to be
+  // read at a glance. formatDuration renders the same value as "5 h 31 min".
   const hint =
     freshness.ageSeconds === null
       ? "no snapshot published yet"
-      : `${freshness.ageSeconds}s since last snapshot`;
+      : `${formatDuration(freshness.ageSeconds)} since last snapshot`;
 
   return (
     <span
