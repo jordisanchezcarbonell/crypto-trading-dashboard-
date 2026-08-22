@@ -32,9 +32,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-# ...but the placeholder template MUST be tracked so contributors know what
-# to set. Real values still land in .env.local (matched by the pattern above).
+# ...but the placeholder templates MUST be tracked so contributors know what
+# to set. Real values still land in .env.local / .env.anon.local (both
+# matched by the .env* pattern above).
 !.env.example
+!.env.anon.example
 
 # vercel
 .vercel

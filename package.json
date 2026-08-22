@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "supabase:seed": "tsx supabase/seed.ts"
+    "supabase:seed": "tsx supabase/seed.ts",
+    "verify:anon-rls": "node scripts/verify-anon-rls.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",
