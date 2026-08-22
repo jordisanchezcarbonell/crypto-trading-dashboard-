@@ -52,6 +52,30 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
   return `${formatDistanceToNowStrict(target)} ${suffix}`;
 }
 
+/**
+ * A duration in seconds as a short, human-readable span ("28 min",
+ * "2 h 10 min"). Used for the processing cadence, where the direction
+ * (due vs overdue) is carried by a label rather than a sign, so this
+ * function always renders a magnitude.
+ */
+export function formatDuration(totalSeconds: number): string {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+  if (seconds < 60) return `${seconds} s`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min`;
+
+  const hours = Math.floor(minutes / 60);
+  const restMinutes = minutes % 60;
+  if (hours < 24) {
+    return restMinutes === 0 ? `${hours} h` : `${hours} h ${restMinutes} min`;
+  }
+
+  const days = Math.floor(hours / 24);
+  const restHours = hours % 24;
+  return restHours === 0 ? `${days} d` : `${days} d ${restHours} h`;
+}
+
 export function pnlToneClass(value: number): string {
   if (value > 0) return "text-emerald-400";
   if (value < 0) return "text-rose-400";

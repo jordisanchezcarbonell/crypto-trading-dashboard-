@@ -111,6 +111,13 @@ export class SupabaseDashboardProvider implements DashboardProviderContract {
       .from("decisions")
       .select("*")
       .eq("run_id", runId)
+      // Ordered by `ts` (the feature bar), NOT by `signal_available_at`,
+      // even though the timeline displays the latter. The two are
+      // monotonically related — availability is the bar plus one whole
+      // timeframe — so `ts DESC` selects exactly the same newest `limit`
+      // rows, while `signal_available_at DESC` would sort every pre-002 row
+      // (NULL) to one end and truncate the window. The timeline re-sorts by
+      // availability once the page has the rows.
       .order("ts", { ascending: false })
       .limit(limit);
     if (error) throw wrap(error, "decisions");
@@ -236,11 +243,15 @@ function wrap(err: { message?: string; code?: string }, context: string): Error 
 }
 
 function emptyHealth(): HealthSnapshot {
-  const iso = new Date(0).toISOString();
+  // No system_snapshots row means we know nothing about the cadence. The
+  // previous version stamped epoch 0, which rendered as a 1970 date and a
+  // "56 years ago" countdown — a fabricated value dressed as data. `null`
+  // is the honest answer and the UI renders it as "unknown".
   return {
     overall: "down",
-    lastSync: iso,
-    nextProcessing: iso,
+    lastSync: null,
+    lastProcessingAt: null,
+    nextProcessing: null,
     components: [],
   };
 }
