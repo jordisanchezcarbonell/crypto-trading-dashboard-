@@ -41,9 +41,9 @@ describe("format helpers", () => {
   });
 
   it("maps PnL to a tone class", () => {
-    expect(pnlToneClass(10)).toContain("emerald");
-    expect(pnlToneClass(-1)).toContain("rose");
-    expect(pnlToneClass(0)).toContain("zinc");
+    expect(pnlToneClass(10)).toBe("text-pos");
+    expect(pnlToneClass(-1)).toBe("text-neg");
+    expect(pnlToneClass(0)).toBe("text-muted");
   });
 });
 
@@ -78,9 +78,9 @@ describe("optional formatters — null is unknown, not zero", () => {
   });
 
   it("treats unknown as neutral tone, not positive-of-zero", () => {
-    expect(pnlToneClassOptional(null)).toContain("zinc");
-    expect(pnlToneClassOptional(undefined)).toContain("zinc");
-    expect(pnlToneClassOptional(0)).toContain("zinc");
-    expect(pnlToneClassOptional(1)).toContain("emerald");
+    expect(pnlToneClassOptional(null)).toBe("text-muted");
+    expect(pnlToneClassOptional(undefined)).toBe("text-muted");
+    expect(pnlToneClassOptional(0)).toBe("text-muted");
+    expect(pnlToneClassOptional(1)).toBe("text-pos");
   });
 });

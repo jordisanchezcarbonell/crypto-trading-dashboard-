@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/Badge";
+import { SideTag } from "@/components/ui/SideTag";
 import { DataTable, type Column } from "./DataTable";
 import type { Position } from "@/lib/domain/schemas";
 import {
@@ -15,16 +15,12 @@ const columns: Column<Position>[] = [
   {
     key: "symbol",
     header: "Symbol",
-    render: (r) => <span className="font-medium text-zinc-50">{r.symbol}</span>,
+    render: (r) => <span className="font-semibold tracking-tight text-ink">{r.symbol}</span>,
   },
   {
     key: "side",
     header: "Side",
-    render: (r) => (
-      <Badge tone={r.side === "long" ? "success" : "danger"}>
-        {r.side.toUpperCase()}
-      </Badge>
-    ),
+    render: (r) => <SideTag side={r.side} />,
   },
   { key: "qty", header: "Qty", align: "right", render: (r) => formatQty(r.qty) },
   {
@@ -52,7 +48,7 @@ const columns: Column<Position>[] = [
     render: (r) => (
       <span className={pnlToneClass(r.unrealizedPnlUsd)}>
         {formatSignedUsd(r.unrealizedPnlUsd)}{" "}
-        <span className="text-xs text-zinc-500">
+        <span className="text-[11px] text-faint">
           ({formatSignedPct(r.unrealizedPnlPct)})
         </span>
       </span>
@@ -61,14 +57,14 @@ const columns: Column<Position>[] = [
   {
     key: "strategy",
     header: "Strategy",
-    render: (r) => <span className="text-zinc-400">{r.strategy}</span>,
+    render: (r) => <span className="text-muted">{r.strategy}</span>,
   },
   {
     key: "opened",
     header: "Opened",
     align: "right",
     render: (r) => (
-      <span className="text-zinc-400" suppressHydrationWarning>
+      <span className="text-muted" suppressHydrationWarning>
         {formatRelative(r.openedAt)}
       </span>
     ),
@@ -82,6 +78,7 @@ export function PositionsTable({ positions }: { positions: Position[] }) {
       columns={columns}
       rowKey={(p) => p.id}
       emptyLabel="No open positions."
+      caption="Open positions with entry, mark price and unrealized PnL"
     />
   );
 }

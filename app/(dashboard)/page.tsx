@@ -28,7 +28,7 @@ export default function OverviewPage() {
   const unrealized = positions.reduce((s, p) => s + p.unrealizedPnlUsd, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="animate-rise space-y-6">
       <PageHeader
         title="Overview"
         description={`Snapshot of ${snapshot.runId} — read via ${source === "supabase" ? "Supabase" : "local mock"} (read-only).`}

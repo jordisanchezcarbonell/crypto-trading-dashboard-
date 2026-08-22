@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/Badge";
+import { SideTag } from "@/components/ui/SideTag";
 import { DataTable, type Column } from "./DataTable";
 import type { ClosedTrade } from "@/lib/domain/schemas";
 import {
@@ -14,16 +14,12 @@ const columns: Column<ClosedTrade>[] = [
   {
     key: "symbol",
     header: "Symbol",
-    render: (r) => <span className="font-medium text-zinc-50">{r.symbol}</span>,
+    render: (r) => <span className="font-semibold tracking-tight text-ink">{r.symbol}</span>,
   },
   {
     key: "side",
     header: "Side",
-    render: (r) => (
-      <Badge tone={r.side === "long" ? "success" : "danger"}>
-        {r.side.toUpperCase()}
-      </Badge>
-    ),
+    render: (r) => <SideTag side={r.side} />,
   },
   { key: "qty", header: "Qty", align: "right", render: (r) => formatQty(r.qty) },
   {
@@ -45,7 +41,7 @@ const columns: Column<ClosedTrade>[] = [
     render: (r) => (
       <span className={pnlToneClass(r.pnlUsd)}>
         {formatSignedUsd(r.pnlUsd)}{" "}
-        <span className="text-xs text-zinc-500">
+        <span className="text-[11px] text-faint">
           ({formatSignedPct(r.pnlPct)})
         </span>
       </span>
@@ -55,24 +51,24 @@ const columns: Column<ClosedTrade>[] = [
     key: "fees",
     header: "Fees",
     align: "right",
-    render: (r) => <span className="text-zinc-400">{formatUsd(r.feesUsd)}</span>,
+    render: (r) => <span className="text-muted">{formatUsd(r.feesUsd)}</span>,
   },
   {
     key: "strategy",
     header: "Strategy",
-    render: (r) => <span className="text-zinc-400">{r.strategy}</span>,
+    render: (r) => <span className="text-muted">{r.strategy}</span>,
   },
   {
     key: "reason",
     header: "Reason",
-    render: (r) => <span className="text-zinc-400">{r.reason}</span>,
+    render: (r) => <span className="text-muted">{r.reason}</span>,
   },
   {
     key: "closed",
     header: "Closed",
     align: "right",
     render: (r) => (
-      <span className="text-zinc-400">{formatDateTime(r.closedAt)}</span>
+      <span className="text-muted">{formatDateTime(r.closedAt)}</span>
     ),
   },
 ];
@@ -87,6 +83,7 @@ export function TradesTable({ trades }: { trades: ClosedTrade[] }) {
       columns={columns}
       rowKey={(t) => t.id}
       emptyLabel="No closed trades."
+      caption="Closed trades with entry, exit, PnL and close reason"
     />
   );
 }

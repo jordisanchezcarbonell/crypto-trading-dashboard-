@@ -5,13 +5,22 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import type { ClosedTrade } from "@/lib/domain/schemas";
-import { formatSignedUsd } from "@/lib/format";
+import { formatSignedUsd, formatUsd } from "@/lib/format";
+import {
+  CHART,
+  ChartFrame,
+  ChartTooltip,
+  axisProps,
+  chartMargin,
+  gridProps,
+} from "./chart-theme";
 
 export function PnLBarChart({
   trades,
@@ -24,47 +33,40 @@ export function PnLBarChart({
     .sort(
       (a, b) => new Date(a.closedAt).getTime() - new Date(b.closedAt).getTime()
     )
-    .map((t, i) => ({
-      idx: i + 1,
-      pnl: t.pnlUsd,
-      symbol: t.symbol,
-    }));
+    .map((t, i) => ({ idx: i + 1, pnl: t.pnlUsd, symbol: t.symbol }));
 
   return (
-    <div style={{ width: "100%", height }}>
+    <ChartFrame height={height}>
       <ResponsiveContainer>
-        <BarChart data={data} margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
-          <CartesianGrid stroke="#27272a" strokeDasharray="3 3" />
-          <XAxis dataKey="idx" stroke="#52525b" fontSize={11} />
+        <BarChart data={data} margin={chartMargin}>
+          <CartesianGrid {...gridProps} />
+          <XAxis dataKey="idx" {...axisProps} />
           <YAxis
-            stroke="#52525b"
-            fontSize={11}
-            tickFormatter={(v) => `$${v}`}
-            width={54}
+            tickFormatter={(v) => formatUsd(Number(v), { compact: true })}
+            width={56}
+            {...axisProps}
           />
+          {/* Zero line anchors the eye between winners and losers. */}
+          <ReferenceLine y={0} stroke={CHART.axis} strokeOpacity={0.5} />
           <Tooltip
-            contentStyle={{
-              background: "#18181b",
-              border: "1px solid #3f3f46",
-              borderRadius: 8,
-              fontSize: 12,
-            }}
-            labelFormatter={(v) => `Trade #${v}`}
-            formatter={(value, _n, payload) => [
-              formatSignedUsd(Number(value)),
-              (payload && payload.payload?.symbol) || "PnL",
-            ]}
-          />
-          <Bar dataKey="pnl">
-            {data.map((d) => (
-              <Cell
-                key={d.idx}
-                fill={d.pnl >= 0 ? "#34d399" : "#f43f5e"}
+            cursor={{ fill: "rgba(255,255,255,0.04)" }}
+            content={
+              <ChartTooltip
+                labelFormatter={(v) => `Trade #${v}`}
+                nameFormatter={(entry) =>
+                  (entry.payload?.symbol as string) ?? "PnL"
+                }
+                valueFormatter={(value) => formatSignedUsd(value)}
               />
+            }
+          />
+          <Bar dataKey="pnl" radius={[3, 3, 0, 0]} maxBarSize={26}>
+            {data.map((d) => (
+              <Cell key={d.idx} fill={d.pnl >= 0 ? CHART.pos : CHART.neg} />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </ChartFrame>
   );
 }

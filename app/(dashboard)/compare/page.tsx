@@ -12,7 +12,7 @@ export default function ComparePage() {
   const { comparisons } = snapshot;
 
   return (
-    <div className="space-y-6">
+    <div className="animate-rise space-y-6">
       <PageHeader
         title="Compare"
         description="RUN-3 vs baselines (indexed to 100 at start)."

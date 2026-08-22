@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Segmented } from "@/components/ui/Segmented";
 import { Stat } from "@/components/ui/Stat";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { TradesTable } from "@/components/tables/TradesTable";
@@ -35,27 +36,17 @@ export default function TradesPage() {
     filtered.length === 0 ? 0 : (wins.length / filtered.length) * 100;
 
   return (
-    <div className="space-y-6">
+    <div className="animate-rise space-y-6">
       <PageHeader
         title="Closed trades"
         description={`${filtered.length} of ${trades.length} trades`}
         right={
-          <div className="flex items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900/40 p-0.5 text-xs">
-            {(["all", "long", "short"] as SideFilter[]).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setSide(s)}
-                className={
-                  side === s
-                    ? "rounded-md bg-zinc-800 px-3 py-1 font-medium text-zinc-100"
-                    : "rounded-md px-3 py-1 text-zinc-400 hover:text-zinc-200"
-                }
-              >
-                {s.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label="Filter trades by side"
+            options={["all", "long", "short"] as const}
+            value={side}
+            onChange={setSide}
+          />
         }
       />
 

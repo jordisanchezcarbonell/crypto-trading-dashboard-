@@ -53,9 +53,9 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
 }
 
 export function pnlToneClass(value: number): string {
-  if (value > 0) return "text-emerald-400";
-  if (value < 0) return "text-rose-400";
-  return "text-zinc-400";
+  if (value > 0) return "text-pos";
+  if (value < 0) return "text-neg";
+  return "text-muted";
 }
 
 // -----------------------------------------------------------------------------
@@ -100,6 +100,6 @@ export function formatOptionalNumber(
 
 /** For UI tone helpers: treat null as neutral, not positive or negative. */
 export function pnlToneClassOptional(value: number | null | undefined): string {
-  if (value == null) return "text-zinc-400";
+  if (value == null) return "text-muted";
   return pnlToneClass(value);
 }

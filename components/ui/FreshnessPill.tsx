@@ -1,4 +1,5 @@
-import { Badge, type BadgeTone } from "./Badge";
+import clsx from "clsx";
+import { type BadgeTone } from "./Badge";
 import type { Freshness } from "@/lib/domain/schemas";
 
 const LEVEL_TONE: Record<Freshness["level"], BadgeTone> = {
@@ -15,16 +16,34 @@ const LEVEL_LABEL: Record<Freshness["level"], string> = {
   no_data: "NO DATA",
 };
 
+const RING: Record<BadgeTone, string> = {
+  neutral: "border-edge bg-overlay text-ink",
+  info: "border-info/25 bg-info/10 text-info",
+  accent: "border-accent/25 bg-accent/10 text-accent",
+  warning: "border-warn/25 bg-warn/10 text-warn",
+  success: "border-pos/25 bg-pos/10 text-pos",
+  danger: "border-neg/25 bg-neg/10 text-neg",
+  muted: "border-line bg-raised text-muted",
+};
+
 export function FreshnessPill({ freshness }: { freshness: Freshness }) {
+  const tone = LEVEL_TONE[freshness.level];
   const label = LEVEL_LABEL[freshness.level];
   const hint =
     freshness.ageSeconds === null
       ? "no snapshot published yet"
       : `${freshness.ageSeconds}s since last snapshot`;
+
   return (
-    <Badge tone={LEVEL_TONE[freshness.level]} className="tracking-wide">
-      <span>{label}</span>
-      <span className="text-[10px] font-normal text-current/70">· {hint}</span>
-    </Badge>
+    <span
+      className={clsx(
+        "inline-flex items-center gap-2 rounded-md border py-0.5 pl-2 pr-2 text-[11px] font-medium leading-5",
+        RING[tone]
+      )}
+    >
+      <span className="tracking-wider">{label}</span>
+      <span aria-hidden="true" className="h-3 w-px bg-current/25" />
+      <span className="num font-normal text-current/70">{hint}</span>
+    </span>
   );
 }
