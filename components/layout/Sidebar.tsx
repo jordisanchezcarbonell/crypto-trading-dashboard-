@@ -20,7 +20,10 @@ export function Sidebar() {
         href="/"
         className="mb-7 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-raised/60"
       >
-        <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-accent to-pos shadow-[0_0_16px_-4px_var(--color-accent)]">
+        {/* accent → info, never accent → pos. The palette reserves green and
+            red for PnL direction (see app/globals.css); spending the gain
+            colour on a logo is exactly how a signal becomes decoration. */}
+        <span className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-linear-to-br from-accent to-info shadow-[0_0_16px_-4px_var(--color-accent)]">
           <svg
             viewBox="0 0 24 24"
             className="h-4 w-4 text-base"

@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import type { EquityPoint } from "@/lib/domain/schemas";
-import { formatDate, formatUsd } from "@/lib/format";
+import { formatUsd } from "@/lib/format";
 import {
   CHART,
   ChartFrame,
@@ -18,6 +18,7 @@ import {
   axisProps,
   chartMargin,
   gridProps,
+  timeAxis,
 } from "./chart-theme";
 
 export function EquityCurveChart({
@@ -28,6 +29,7 @@ export function EquityCurveChart({
   height?: number;
 }) {
   const data = points.map((p) => ({ ts: p.timestamp, equity: p.equityUsd }));
+  const axis = timeAxis(points);
 
   return (
     <ChartFrame height={height}>
@@ -42,7 +44,7 @@ export function EquityCurveChart({
           <CartesianGrid {...gridProps} />
           <XAxis
             dataKey="ts"
-            tickFormatter={(v) => formatDate(v as string).slice(5)}
+            tickFormatter={axis.tickFormatter}
             minTickGap={40}
             {...axisProps}
           />
@@ -56,7 +58,7 @@ export function EquityCurveChart({
             cursor={{ stroke: CHART.accent, strokeOpacity: 0.35, strokeWidth: 1 }}
             content={
               <ChartTooltip
-                labelFormatter={(v) => formatDate(String(v))}
+                labelFormatter={axis.labelFormatter}
                 nameFormatter={() => "Equity"}
                 valueFormatter={(value) => formatUsd(value)}
               />

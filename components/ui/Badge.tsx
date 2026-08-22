@@ -24,13 +24,25 @@ export function Badge({
   children,
   tone = "neutral",
   className,
+  title,
+  "aria-label": ariaLabel,
 }: {
   children: ReactNode;
   tone?: BadgeTone;
   className?: string;
+  /** Native tooltip — for badges whose meaning is carried by an icon. */
+  title?: string;
+  /** Required when the badge renders no text of its own. */
+  "aria-label"?: string;
 }) {
   return (
     <span
+      title={title}
+      aria-label={ariaLabel}
+      // A bare span is generic, and `aria-label` on a generic element is not
+      // reliably exposed. `role="img"` makes the icon-only badge a labelled
+      // object, which is what it is. Text badges stay generic.
+      role={ariaLabel ? "img" : undefined}
       className={clsx(
         "inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[11px] font-medium leading-5",
         toneClasses[tone],

@@ -12,6 +12,12 @@ import type { ReactNode } from "react";
  *
  * The delta rides alongside the value rather than underneath it, because
  * "how much" and "which direction" are read together.
+ *
+ * `aside` fills the right half. At two grid columns wide this card had a
+ * headline number using a third of its width and nothing beyond it, so the
+ * emphasis read as an accident of the grid rather than a decision. A
+ * sparkline there costs no vertical space and answers the question the
+ * figure provokes — "and before that?" — without a second card.
  */
 export function HeroStat({
   label,
@@ -19,6 +25,7 @@ export function HeroStat({
   delta,
   deltaTone = "neutral",
   caption,
+  aside,
   className,
 }: {
   label: string;
@@ -26,6 +33,8 @@ export function HeroStat({
   delta?: ReactNode;
   deltaTone?: "positive" | "negative" | "neutral";
   caption?: ReactNode;
+  /** Optional visual to the right of the figure — a sparkline, typically. */
+  aside?: ReactNode;
   className?: string;
 }) {
   return (
@@ -46,30 +55,41 @@ export function HeroStat({
               : "from-edge"
         )}
       />
-      <div className="eyebrow">{label}</div>
-      <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="num text-3xl font-semibold leading-none tracking-tight text-ink sm:text-4xl">
-          {value}
-        </span>
-        {delta && (
-          <span
-            className={clsx(
-              "num rounded-md border px-1.5 py-0.5 text-sm font-medium leading-5",
-              deltaTone === "positive" &&
-                "border-pos/25 bg-pos/10 text-pos",
-              deltaTone === "negative" &&
-                "border-neg/25 bg-neg/10 text-neg",
-              deltaTone === "neutral" &&
-                "border-line bg-raised text-faint"
+      <div className="flex items-stretch justify-between gap-6">
+        <div className="min-w-0">
+          <div className="eyebrow">{label}</div>
+          <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="num text-3xl font-semibold leading-none tracking-tight text-ink sm:text-4xl">
+              {value}
+            </span>
+            {delta && (
+              <span
+                className={clsx(
+                  "num rounded-md border px-1.5 py-0.5 text-sm font-medium leading-5",
+                  deltaTone === "positive" &&
+                    "border-pos/25 bg-pos/10 text-pos",
+                  deltaTone === "negative" &&
+                    "border-neg/25 bg-neg/10 text-neg",
+                  deltaTone === "neutral" &&
+                    "border-line bg-raised text-faint"
+                )}
+              >
+                {delta}
+              </span>
             )}
-          >
-            {delta}
-          </span>
+          </div>
+          {caption && (
+            <div className="mt-2 text-xs text-muted">{caption}</div>
+          )}
+        </div>
+        {/* Hidden on narrow cards: below `sm` the figure needs the full
+            width, and a 90px-wide sparkline is a smudge, not a trend. */}
+        {aside && (
+          <div className="hidden min-w-0 flex-1 items-end justify-end sm:flex">
+            {aside}
+          </div>
         )}
       </div>
-      {caption && (
-        <div className="mt-2 text-xs text-muted">{caption}</div>
-      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
+import { UNAVAILABLE } from "@/lib/format";
 
 export interface Metric {
   label: string;
@@ -29,14 +30,40 @@ const toneClass = {
  *
  * Rendered as a description list so the label/value pairing survives for a
  * screen reader, which a row of visually-adjacent divs would not convey.
+ *
+ * When every metric is unknown the strip renders `emptyHint` instead. A run
+ * with no closed trades has no Sharpe, no Sortino, no win rate and no profit
+ * factor, and six em dashes in a row is a full-width band that says nothing
+ * six times — worse than silence, because the reader has to check each one
+ * to learn that. One sentence explaining *when* the numbers arrive is the
+ * same pixels spent on actual information.
  */
 export function MetricStrip({
   metrics,
+  emptyHint,
   className,
 }: {
   metrics: Metric[];
+  /** Shown in place of the metrics when every value is unavailable. */
+  emptyHint?: ReactNode;
   className?: string;
 }) {
+  const allUnavailable =
+    metrics.length > 0 && metrics.every((m) => m.value === UNAVAILABLE);
+
+  if (emptyHint && allUnavailable) {
+    return (
+      <p
+        className={clsx(
+          "rounded-card border border-line bg-surface/50 px-5 py-3 text-xs text-muted",
+          className
+        )}
+      >
+        {emptyHint}
+      </p>
+    );
+  }
+
   return (
     <dl
       className={clsx(

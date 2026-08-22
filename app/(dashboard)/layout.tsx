@@ -7,6 +7,7 @@ import { DashboardProvider } from "@/lib/providers/DashboardProvider";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Header } from "@/components/layout/Header";
+import { SHELL_WIDTH } from "@/components/layout/shell";
 
 const RUN_ID = process.env.DASHBOARD_RUN_ID ?? DEFAULT_RUN_ID;
 
@@ -32,7 +33,7 @@ export default async function DashboardLayout({
           <MobileNav />
           <main
             id="main"
-            className="mx-auto w-full max-w-[1600px] flex-1 overflow-x-hidden px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
+            className={`${SHELL_WIDTH} flex-1 overflow-x-hidden py-6 lg:py-8`}
           >
             {children}
           </main>

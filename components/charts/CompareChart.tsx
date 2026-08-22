@@ -12,7 +12,6 @@ import {
   YAxis,
 } from "recharts";
 import type { ComparisonSeries } from "@/lib/domain/schemas";
-import { formatDate } from "@/lib/format";
 import {
   CHART,
   ChartFrame,
@@ -20,6 +19,7 @@ import {
   axisProps,
   chartMargin,
   gridProps,
+  timeAxis,
 } from "./chart-theme";
 
 export function CompareChart({
@@ -30,6 +30,7 @@ export function CompareChart({
   height?: number;
 }) {
   const timestamps = series[0]?.points.map((p) => p.timestamp) ?? [];
+  const axis = timeAxis(timestamps.map((timestamp) => ({ timestamp })));
   const data = timestamps.map((ts, i) => {
     const row: Record<string, number | string> = { ts };
     for (const s of series) {
@@ -45,7 +46,7 @@ export function CompareChart({
           <CartesianGrid {...gridProps} />
           <XAxis
             dataKey="ts"
-            tickFormatter={(v) => formatDate(v as string).slice(5)}
+            tickFormatter={axis.tickFormatter}
             minTickGap={40}
             {...axisProps}
           />
@@ -61,7 +62,7 @@ export function CompareChart({
             cursor={{ stroke: CHART.axis, strokeOpacity: 0.4, strokeWidth: 1 }}
             content={
               <ChartTooltip
-                labelFormatter={(v) => formatDate(String(v))}
+                labelFormatter={axis.labelFormatter}
                 valueFormatter={(value) => value.toFixed(2)}
               />
             }
