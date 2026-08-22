@@ -3,7 +3,7 @@ import { run3Snapshot } from "@/lib/mock/run3-fixtures";
 
 describe("RUN-3 mock snapshot", () => {
   it("has the expected top-level shape", () => {
-    expect(run3Snapshot.runId).toBe("RUN-3");
+    expect(run3Snapshot.runId).toBe("RUN-3-DEMO");
     expect(run3Snapshot.mode).toBe("paper");
     expect(run3Snapshot.readOnly).toBe(true);
   });

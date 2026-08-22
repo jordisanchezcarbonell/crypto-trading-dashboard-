@@ -7,12 +7,14 @@ import type {
   PerformanceSummary,
   Position,
   RunSnapshot,
+  StrategyStatus,
 } from "@/lib/domain/schemas";
+import { computeFreshness } from "@/lib/domain/freshness";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const HOUR_MS = 60 * 60 * 1000;
 
-// Deterministic PRNG so fixtures are stable between runs and tests.
+// Deterministic PRNG so fixtures stay stable between runs and tests.
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
@@ -24,9 +26,14 @@ function mulberry32(seed: number): () => number {
   };
 }
 
-const RUN_START_EPOCH = Date.UTC(2026, 4, 24, 8, 0, 0); // 2026-05-24 (fixed anchor)
-const SNAPSHOT_EPOCH = Date.UTC(2026, 7, 22, 12, 30, 0); // 2026-08-22 12:30 UTC
+// Fixed anchors keep equity curve, trades and decisions reproducible.
+// Timestamps that need to feel "live" (last_sync, next_processing) are
+// derived from the `now` argument passed into `buildRun3Snapshot`.
+const RUN_START_EPOCH = Date.UTC(2026, 4, 24, 8, 0, 0);
+const SNAPSHOT_EPOCH = Date.UTC(2026, 7, 22, 12, 30, 0);
 const START_CAPITAL = 10_000;
+const STRATEGIES = ["EMA-v1", "EMA-v2-risk"] as const;
+type StrategyName = (typeof STRATEGIES)[number];
 
 function isoAt(offsetMs: number): string {
   return new Date(SNAPSHOT_EPOCH + offsetMs).toISOString();
@@ -44,18 +51,11 @@ function buildEquityCurve(): EquityPoint[] {
   for (let i = 0; i <= days; i += 1) {
     const shock = (rand() - 0.5) * 2 * dailyDriftStd;
     const drift = dailyDriftMean + shock;
-    if (i === 0) {
-      equity = START_CAPITAL;
-    } else {
-      equity = Math.max(500, equity * (1 + drift));
-    }
+    equity = i === 0 ? START_CAPITAL : Math.max(500, equity * (1 + drift));
     peak = Math.max(peak, equity);
     const drawdown = (equity - peak) / peak;
-    const timestamp = new Date(
-      RUN_START_EPOCH + i * DAY_MS
-    ).toISOString();
     points.push({
-      timestamp,
+      timestamp: new Date(RUN_START_EPOCH + i * DAY_MS).toISOString(),
       equityUsd: Number(equity.toFixed(2)),
       drawdownPct: Number((drawdown * 100).toFixed(3)),
     });
@@ -63,12 +63,38 @@ function buildEquityCurve(): EquityPoint[] {
   return points;
 }
 
-const equityCurve = buildEquityCurve();
-const currentEquity = equityCurve[equityCurve.length - 1].equityUsd;
-const maxDrawdownPct = equityCurve.reduce(
-  (min, p) => (p.drawdownPct < min ? p.drawdownPct : min),
-  0
-);
+function buildClosedTrade(
+  symbol: string,
+  side: "long" | "short",
+  qty: number,
+  entry: number,
+  exit: number,
+  hoursAgo: number,
+  strategy: StrategyName,
+  reason: string
+): ClosedTrade {
+  const direction = side === "long" ? 1 : -1;
+  const grossPnl = (exit - entry) * qty * direction;
+  const notional = entry * qty;
+  const fees = Number((notional * 0.0004 * 2).toFixed(2));
+  const pnl = Number((grossPnl - fees).toFixed(2));
+  const pnlPct = Number((((exit - entry) / entry) * 100 * direction).toFixed(3));
+  return {
+    id: `trd_${symbol}_${hoursAgo}`,
+    symbol,
+    side,
+    qty,
+    entryPrice: entry,
+    exitPrice: exit,
+    pnlUsd: pnl,
+    pnlPct,
+    feesUsd: fees,
+    openedAt: isoAt(-(hoursAgo + Math.round(3 + qty)) * HOUR_MS),
+    closedAt: isoAt(-hoursAgo * HOUR_MS),
+    strategy,
+    reason,
+  };
+}
 
 const positions: Position[] = [
   {
@@ -82,7 +108,7 @@ const positions: Position[] = [
     unrealizedPnlUsd: (63_105.4 - 61_240.12) * 0.084,
     unrealizedPnlPct: ((63_105.4 - 61_240.12) / 61_240.12) * 100,
     openedAt: isoAt(-3 * DAY_MS - 4 * HOUR_MS),
-    strategy: "trend-follow-v2",
+    strategy: "EMA-v1",
   },
   {
     id: "pos_eth_1",
@@ -95,7 +121,7 @@ const positions: Position[] = [
     unrealizedPnlUsd: (3_281.55 - 3_205.8) * 1.42,
     unrealizedPnlPct: ((3_281.55 - 3_205.8) / 3_205.8) * 100,
     openedAt: isoAt(-1 * DAY_MS - 6 * HOUR_MS),
-    strategy: "mean-reversion",
+    strategy: "EMA-v2-risk",
   },
   {
     id: "pos_sol_1",
@@ -108,67 +134,32 @@ const positions: Position[] = [
     unrealizedPnlUsd: (148.2 - 152.9) * 12.4,
     unrealizedPnlPct: ((148.2 - 152.9) / 148.2) * 100,
     openedAt: isoAt(-9 * HOUR_MS),
-    strategy: "breakout-fade",
+    strategy: "EMA-v2-risk",
   },
 ];
 
 const trades: ClosedTrade[] = [
-  buildClosedTrade("BTC-USDT", "long", 0.06, 58_400, 60_120, 6, "trend-follow-v2", "target reached"),
-  buildClosedTrade("ETH-USDT", "long", 1.1, 3_050, 3_180, 12, "trend-follow-v2", "signal exit"),
-  buildClosedTrade("SOL-USDT", "long", 15, 132.4, 140.1, 18, "mean-reversion", "target reached"),
-  buildClosedTrade("BTC-USDT", "short", 0.05, 62_800, 61_940, 24, "breakout-fade", "target reached"),
-  buildClosedTrade("ETH-USDT", "long", 1.3, 3_310, 3_215, 30, "trend-follow-v2", "stop hit"),
-  buildClosedTrade("AVAX-USDT", "long", 25, 32.8, 34.6, 36, "mean-reversion", "target reached"),
-  buildClosedTrade("BTC-USDT", "long", 0.07, 59_100, 60_450, 44, "trend-follow-v2", "target reached"),
-  buildClosedTrade("ARB-USDT", "long", 900, 0.78, 0.71, 52, "trend-follow-v2", "stop hit"),
-  buildClosedTrade("SOL-USDT", "short", 10, 155.4, 150.9, 60, "breakout-fade", "target reached"),
-  buildClosedTrade("BTC-USDT", "long", 0.08, 60_800, 61_950, 68, "trend-follow-v2", "target reached"),
-  buildClosedTrade("ETH-USDT", "short", 1.4, 3_290, 3_360, 76, "breakout-fade", "stop hit"),
-  buildClosedTrade("LINK-USDT", "long", 120, 14.2, 15.4, 84, "trend-follow-v2", "target reached"),
-  buildClosedTrade("BTC-USDT", "long", 0.05, 62_100, 63_050, 92, "trend-follow-v2", "target reached"),
-  buildClosedTrade("SOL-USDT", "long", 12, 144.5, 149.2, 100, "mean-reversion", "target reached"),
-  buildClosedTrade("ETH-USDT", "long", 1.2, 3_180, 3_120, 108, "trend-follow-v2", "stop hit"),
-  buildClosedTrade("MATIC-USDT", "long", 2200, 0.62, 0.66, 116, "mean-reversion", "target reached"),
-  buildClosedTrade("BTC-USDT", "long", 0.06, 60_400, 61_800, 124, "trend-follow-v2", "target reached"),
-  buildClosedTrade("SOL-USDT", "long", 14, 138.2, 145.6, 132, "mean-reversion", "target reached"),
-  buildClosedTrade("ETH-USDT", "short", 1.0, 3_320, 3_240, 140, "breakout-fade", "target reached"),
-  buildClosedTrade("BTC-USDT", "long", 0.09, 59_800, 58_900, 148, "trend-follow-v2", "stop hit"),
+  buildClosedTrade("BTC-USDT", "long", 0.06, 58_400, 60_120, 6, "EMA-v1", "target reached"),
+  buildClosedTrade("ETH-USDT", "long", 1.1, 3_050, 3_180, 12, "EMA-v1", "signal exit"),
+  buildClosedTrade("SOL-USDT", "long", 15, 132.4, 140.1, 18, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("BTC-USDT", "short", 0.05, 62_800, 61_940, 24, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("ETH-USDT", "long", 1.3, 3_310, 3_215, 30, "EMA-v1", "stop hit"),
+  buildClosedTrade("AVAX-USDT", "long", 25, 32.8, 34.6, 36, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("BTC-USDT", "long", 0.07, 59_100, 60_450, 44, "EMA-v1", "target reached"),
+  buildClosedTrade("ARB-USDT", "long", 900, 0.78, 0.71, 52, "EMA-v1", "stop hit"),
+  buildClosedTrade("SOL-USDT", "short", 10, 155.4, 150.9, 60, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("BTC-USDT", "long", 0.08, 60_800, 61_950, 68, "EMA-v1", "target reached"),
+  buildClosedTrade("ETH-USDT", "short", 1.4, 3_290, 3_360, 76, "EMA-v2-risk", "stop hit"),
+  buildClosedTrade("LINK-USDT", "long", 120, 14.2, 15.4, 84, "EMA-v1", "target reached"),
+  buildClosedTrade("BTC-USDT", "long", 0.05, 62_100, 63_050, 92, "EMA-v1", "target reached"),
+  buildClosedTrade("SOL-USDT", "long", 12, 144.5, 149.2, 100, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("ETH-USDT", "long", 1.2, 3_180, 3_120, 108, "EMA-v1", "stop hit"),
+  buildClosedTrade("MATIC-USDT", "long", 2200, 0.62, 0.66, 116, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("BTC-USDT", "long", 0.06, 60_400, 61_800, 124, "EMA-v1", "target reached"),
+  buildClosedTrade("SOL-USDT", "long", 14, 138.2, 145.6, 132, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("ETH-USDT", "short", 1.0, 3_320, 3_240, 140, "EMA-v2-risk", "target reached"),
+  buildClosedTrade("BTC-USDT", "long", 0.09, 59_800, 58_900, 148, "EMA-v1", "stop hit"),
 ];
-
-function buildClosedTrade(
-  symbol: string,
-  side: "long" | "short",
-  qty: number,
-  entry: number,
-  exit: number,
-  hoursAgo: number,
-  strategy: string,
-  reason: string
-): ClosedTrade {
-  const direction = side === "long" ? 1 : -1;
-  const grossPnl = (exit - entry) * qty * direction;
-  const notional = entry * qty;
-  const fees = Number((notional * 0.0004 * 2).toFixed(2));
-  const pnl = Number((grossPnl - fees).toFixed(2));
-  const pnlPct = Number((((exit - entry) / entry) * 100 * direction).toFixed(3));
-  const closedAt = isoAt(-hoursAgo * HOUR_MS);
-  const openedAt = isoAt(-(hoursAgo + Math.round(3 + qty)) * HOUR_MS);
-  return {
-    id: `trd_${symbol}_${hoursAgo}`,
-    symbol,
-    side,
-    qty,
-    entryPrice: entry,
-    exitPrice: exit,
-    pnlUsd: pnl,
-    pnlPct,
-    feesUsd: fees,
-    openedAt,
-    closedAt,
-    strategy,
-    reason,
-  };
-}
 
 const decisions: Decision[] = [
   {
@@ -249,8 +240,7 @@ const decisions: Decision[] = [
     symbol: "LINK-USDT",
     action: "open_long",
     confidence: 0.69,
-    rationale:
-      "Range breakout with confirmation. Entering 0.75 units, stop below 13.8.",
+    rationale: "Range breakout with confirmation. Entering 0.75 units, stop below 13.8.",
     signals: [
       { name: "range_break", value: true },
       { name: "vol_z", value: 1.6 },
@@ -263,14 +253,18 @@ const decisions: Decision[] = [
     symbol: "MATIC-USDT",
     action: "hold",
     confidence: 0.51,
-    rationale:
-      "No edge. Market chop and macro data pending in 2h.",
-    signals: [
-      { name: "macro_event", value: "CPI-2h" },
-    ],
+    rationale: "No edge. Market chop and macro data pending in 2h.",
+    signals: [{ name: "macro_event", value: "CPI-2h" }],
     executed: true,
   },
 ];
+
+const equityCurve = buildEquityCurve();
+const currentEquity = equityCurve[equityCurve.length - 1].equityUsd;
+const maxDrawdownPct = equityCurve.reduce(
+  (min, p) => (p.drawdownPct < min ? p.drawdownPct : min),
+  0
+);
 
 const performance: PerformanceSummary = (() => {
   const totalReturnPct = ((currentEquity - START_CAPITAL) / START_CAPITAL) * 100;
@@ -283,8 +277,7 @@ const performance: PerformanceSummary = (() => {
     trades.reduce((s, t) => s + t.pnlPct, 0) / trades.length;
   const best = trades.reduce((m, t) => (t.pnlPct > m ? t.pnlPct : m), -Infinity);
   const worst = trades.reduce((m, t) => (t.pnlPct < m ? t.pnlPct : m), Infinity);
-  const daysActive =
-    (SNAPSHOT_EPOCH - RUN_START_EPOCH) / (365.25 * DAY_MS);
+  const daysActive = (SNAPSHOT_EPOCH - RUN_START_EPOCH) / (365.25 * DAY_MS);
   const cagr =
     (Math.pow(currentEquity / START_CAPITAL, 1 / Math.max(daysActive, 0.01)) -
       1) *
@@ -307,28 +300,21 @@ const performance: PerformanceSummary = (() => {
   };
 })();
 
-const health: HealthSnapshot = {
-  overall: "ok",
-  lastSync: isoAt(-45 * 1000),
-  nextProcessing: isoAt(4 * 60 * 1000 + 15 * 1000),
-  components: [
-    { name: "exchange_ws", status: "ok", detail: "Binance WS connected", latencyMs: 82 },
-    { name: "market_data", status: "ok", detail: "1m candles fresh", latencyMs: 120 },
-    { name: "signal_engine", status: "ok", detail: "5m cycle", latencyMs: 340 },
-    { name: "order_router", status: "ok", detail: "read-only mode: no orders sent", latencyMs: 0 },
-    { name: "persistence", status: "ok", detail: "Supabase reachable", latencyMs: 190 },
-  ],
-};
-
 const comparisons: ComparisonSeries[] = (() => {
   const rand = mulberry32(7);
-  const btcSeries = { label: "BTC hold", color: "#f59e0b", points: [] as { timestamp: string; valueIndexed: number }[] };
-  const runSeries = { label: "RUN-3", color: "#22d3ee", points: [] as { timestamp: string; valueIndexed: number }[] };
+  const btcSeries = {
+    label: "BTC hold",
+    color: "#f59e0b",
+    points: [] as { timestamp: string; valueIndexed: number }[],
+  };
+  const runSeries = {
+    label: "RUN-3",
+    color: "#22d3ee",
+    points: [] as { timestamp: string; valueIndexed: number }[],
+  };
   let btc = 100;
-  let peakBtc = 100;
   for (let i = 0; i < equityCurve.length; i += 1) {
-    btc = btc * (1 + (rand() - 0.48) * 0.02);
-    peakBtc = Math.max(peakBtc, btc);
+    btc *= 1 + (rand() - 0.48) * 0.02;
     const point = equityCurve[i];
     runSeries.points.push({
       timestamp: point.timestamp,
@@ -342,16 +328,98 @@ const comparisons: ComparisonSeries[] = (() => {
   return [runSeries, btcSeries];
 })();
 
-export const run3Snapshot: RunSnapshot = {
-  runId: "RUN-3",
-  mode: "paper",
-  readOnly: true,
-  startedAt: new Date(RUN_START_EPOCH).toISOString(),
-  health,
-  positions,
-  trades,
-  decisions,
-  equityCurve,
-  performance,
-  comparisons,
-};
+function buildStrategies(): StrategyStatus[] {
+  const emaV1 = positions.filter((p) => p.strategy === "EMA-v1");
+  const emaV2 = positions.filter((p) => p.strategy === "EMA-v2-risk");
+  return [
+    {
+      name: "EMA-v1",
+      status: "ok",
+      openPositions: emaV1.length,
+      equityUsd: 5_620.42,
+      dayPnlUsd: 82.4,
+      dayPnlPct: 1.49,
+      lastDecisionAt: decisions[0].timestamp,
+    },
+    {
+      name: "EMA-v2-risk",
+      status: "ok",
+      openPositions: emaV2.length,
+      equityUsd: currentEquity - 5_620.42,
+      dayPnlUsd: -14.9,
+      dayPnlPct: -0.32,
+      lastDecisionAt: decisions[1].timestamp,
+    },
+  ];
+}
+
+const strategies = buildStrategies();
+
+export interface BuildRun3Options {
+  now?: Date;
+  // Fake how long ago the exporter last synced. Defaults to 45s.
+  lastSyncOffsetMs?: number;
+  nextProcessingOffsetMs?: number;
+}
+
+export function buildRun3Snapshot(options: BuildRun3Options = {}): RunSnapshot {
+  const now = options.now ?? new Date();
+  const lastSyncOffset = options.lastSyncOffsetMs ?? -45 * 1000;
+  const nextProcessingOffset =
+    options.nextProcessingOffsetMs ?? 4 * 60 * 1000 + 15 * 1000;
+
+  const lastSyncIso = new Date(now.getTime() + lastSyncOffset).toISOString();
+  const nextProcessingIso = new Date(
+    now.getTime() + nextProcessingOffset
+  ).toISOString();
+
+  const health: HealthSnapshot = {
+    overall: "ok",
+    lastSync: lastSyncIso,
+    nextProcessing: nextProcessingIso,
+    components: [
+      { name: "exchange_ws", status: "ok", detail: "Binance WS connected", latencyMs: 82 },
+      { name: "market_data", status: "ok", detail: "1m candles fresh", latencyMs: 120 },
+      { name: "signal_engine", status: "ok", detail: "5m cycle", latencyMs: 340 },
+      { name: "order_router", status: "ok", detail: "read-only mode: no orders sent", latencyMs: 0 },
+      { name: "persistence", status: "ok", detail: "Supabase reachable", latencyMs: 190 },
+    ],
+  };
+
+  return {
+    runId: "RUN-3-DEMO",
+    mode: "paper",
+    readOnly: true,
+    startedAt: new Date(RUN_START_EPOCH).toISOString(),
+    health,
+    freshness: computeFreshness(lastSyncIso, now),
+    strategies,
+    positions,
+    trades,
+    decisions,
+    equityCurve,
+    performance,
+    comparisons,
+  };
+}
+
+// Stable snapshot for tests: anchored to SNAPSHOT_EPOCH.
+export const run3Snapshot: RunSnapshot = buildRun3Snapshot({
+  now: new Date(SNAPSHOT_EPOCH),
+});
+
+/**
+ * IMPORTANT: this fixture — and every row the seed script writes to Supabase —
+ * uses the sentinel `RUN-3-DEMO`, never `RUN-3`.
+ *
+ *   RUN-3-DEMO → synthetic seeded / mock development data
+ *   RUN-3      → RESERVED for real observability data pushed by the future
+ *                Hetzner exporter. Nothing in this repo may write to it.
+ */
+export const DEMO_RUN_ID = "RUN-3-DEMO";
+
+export const run3Meta = {
+  runId: DEMO_RUN_ID,
+  startCapitalUsd: START_CAPITAL,
+  strategies: STRATEGIES,
+} as const;

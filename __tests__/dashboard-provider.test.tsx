@@ -4,7 +4,7 @@ import {
   DashboardProvider,
   useDashboard,
 } from "@/lib/providers/DashboardProvider";
-import { MockDashboardProvider } from "@/lib/providers/MockDashboardProvider";
+import { run3Snapshot } from "@/lib/mock/run3-fixtures";
 
 function Probe() {
   const { snapshot, source } = useDashboard();
@@ -16,26 +16,30 @@ function Probe() {
   );
 }
 
-describe("DashboardProvider", () => {
-  it("exposes the RUN-3 snapshot via the mock provider", () => {
+describe("DashboardProvider (client context)", () => {
+  it("exposes the snapshot via useDashboard()", () => {
     render(
-      <MockDashboardProvider>
+      <DashboardProvider value={{ snapshot: run3Snapshot, source: "mock" }}>
         <Probe />
-      </MockDashboardProvider>
+      </DashboardProvider>
     );
-    expect(screen.getByTestId("run").textContent).toBe("RUN-3");
+    expect(screen.getByTestId("run").textContent).toBe("RUN-3-DEMO");
     expect(screen.getByTestId("source").textContent).toBe("mock");
   });
 
+  it("also works when labelled as the supabase source", () => {
+    render(
+      <DashboardProvider value={{ snapshot: run3Snapshot, source: "supabase" }}>
+        <Probe />
+      </DashboardProvider>
+    );
+    expect(screen.getByTestId("source").textContent).toBe("supabase");
+  });
+
   it("throws when used outside a provider", () => {
-    // React logs an error boundary trace; we only care about the throw.
     const originalError = console.error;
     console.error = () => {};
     expect(() => render(<Probe />)).toThrow(/useDashboard/);
     console.error = originalError;
-  });
-
-  it("exports the raw provider for future data sources", () => {
-    expect(typeof DashboardProvider).toBe("function");
   });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -33,11 +34,19 @@ export default function SystemPage() {
           <Field label="Data source" value={source} />
           <Field
             label="Last sync"
-            value={`${formatDateTime(health.lastSync)} (${formatRelative(health.lastSync)})`}
+            value={
+              <span suppressHydrationWarning>
+                {formatDateTime(health.lastSync)} ({formatRelative(health.lastSync)})
+              </span>
+            }
           />
           <Field
             label="Next processing"
-            value={`${formatDateTime(health.nextProcessing)} (${formatRelative(health.nextProcessing)})`}
+            value={
+              <span suppressHydrationWarning>
+                {formatDateTime(health.nextProcessing)} ({formatRelative(health.nextProcessing)})
+              </span>
+            }
           />
         </CardBody>
       </Card>
@@ -79,7 +88,13 @@ export default function SystemPage() {
   );
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function Field({
+  label,
+  value,
+}: {
+  label: string;
+  value: ReactNode;
+}) {
   return (
     <div>
       <div className="text-xs uppercase tracking-wide text-zinc-500">

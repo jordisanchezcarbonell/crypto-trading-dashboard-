@@ -57,7 +57,10 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                 </Badge>
               )}
             </div>
-            <span className="text-xs text-zinc-500">
+            <span
+              className="text-xs text-zinc-500"
+              suppressHydrationWarning
+            >
               {formatRelative(d.timestamp)}
             </span>
           </div>

@@ -67,7 +67,9 @@ const columns: Column<Position>[] = [
     header: "Opened",
     align: "right",
     render: (r) => (
-      <span className="text-zinc-400">{formatRelative(r.openedAt)}</span>
+      <span className="text-zinc-400" suppressHydrationWarning>
+        {formatRelative(r.openedAt)}
+      </span>
     ),
   },
 ];

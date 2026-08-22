@@ -123,12 +123,40 @@ export const ComparisonSeriesSchema = z.object({
 });
 export type ComparisonSeries = z.infer<typeof ComparisonSeriesSchema>;
 
+export const StrategyStatusSchema = z.object({
+  name: z.string(),
+  status: HealthStatusSchema,
+  openPositions: z.number().int().nonnegative(),
+  equityUsd: z.number().nonnegative(),
+  dayPnlUsd: z.number(),
+  dayPnlPct: z.number(),
+  lastDecisionAt: IsoDateTime,
+});
+export type StrategyStatus = z.infer<typeof StrategyStatusSchema>;
+
+export const FreshnessLevelSchema = z.enum([
+  "fresh",
+  "delayed",
+  "stale",
+  "no_data",
+]);
+export type FreshnessLevel = z.infer<typeof FreshnessLevelSchema>;
+
+export const FreshnessSchema = z.object({
+  level: FreshnessLevelSchema,
+  generatedAt: IsoDateTime.nullable(),
+  ageSeconds: z.number().nullable(),
+});
+export type Freshness = z.infer<typeof FreshnessSchema>;
+
 export const RunSnapshotSchema = z.object({
   runId: z.string(),
   mode: ModeSchema,
   readOnly: z.boolean(),
   startedAt: IsoDateTime,
   health: HealthSnapshotSchema,
+  freshness: FreshnessSchema,
+  strategies: z.array(StrategyStatusSchema),
   positions: z.array(PositionSchema),
   trades: z.array(ClosedTradeSchema),
   decisions: z.array(DecisionSchema),
