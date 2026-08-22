@@ -225,10 +225,20 @@ export function mapHealth(row: SystemSnapshotRow): HealthSnapshot {
   return HealthSnapshotSchema.parse({
     overall: row.overall,
     lastSync: row.last_sync ?? null,
-    // Prefer the honestly-named column; fall back to the legacy one, which
-    // held exactly this value under a misleading name. No fabrication: if
-    // neither is present the answer is `null` == unknown.
-    lastProcessingAt: row.last_processing_at ?? row.last_sync ?? null,
+    // ONLY the honestly-named column.
+    //
+    // There used to be a `?? row.last_sync` fallback here, added as a bridge
+    // so a dashboard deployed ahead of migration 002 could still render a
+    // cadence. It outlived that purpose and became the bug: the exporter
+    // never started writing `last_processing_at`, so every production render
+    // fell through to `last_sync` — the FEATURE BAR — and presented it as a
+    // processing time with nothing marking it as a substitute.
+    //
+    // A wrong time shown confidently is worse than no time. The bar reads as
+    // a healthy 4h-old run at the exact moment the runner is hours late,
+    // which inverts the signal this dashboard exists to give. Unknown now
+    // stays unknown and surfaces as UNAVAILABLE.
+    lastProcessingAt: row.last_processing_at ?? null,
     nextProcessing: row.next_processing ?? null,
     components: row.components.map((c) => ({
       name: c.name,

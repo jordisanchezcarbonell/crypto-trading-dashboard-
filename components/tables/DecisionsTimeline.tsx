@@ -10,20 +10,24 @@ import {
 } from '@/lib/format';
 
 /**
- * When the decision actually became knowable.
+ * Ordering key — deliberately NOT a displayed value.
  *
  * `d.timestamp` is the FEATURE BAR — the candle the features came from. A
  * decision whose feature bar is 08:00 on a 4h timeframe could not be known
- * until that bar closed at 12:00, so ordering or labelling the timeline by
- * the bar claims the agent saw the future. `signalAvailableAt` is the
- * causally correct instant and is what this timeline sorts and renders by.
+ * until that bar closed at 12:00, so labelling a row with the bar claims
+ * the agent saw the future.
  *
- * `null` means the row predates migration 002 and carries no availability
- * timestamp. We fall back to the feature bar rather than dropping the row,
- * and the UI marks that fallback explicitly instead of passing the bar off
- * as a decision time.
+ * Sorting is not a claim about when anything happened; it only decides
+ * which row sits above which. Availability is the bar plus one whole
+ * timeframe (see lib/data-source/supabase.ts), so the two are monotonically
+ * related and ordering by the bar yields the identical sequence. That makes
+ * the fallback sound HERE, and only here.
+ *
+ * The rendered time keeps no such fallback — see the `<time>` below. Putting
+ * the bar in the headline slot is precisely the substitution that let a late
+ * runner read as on time.
  */
-function decidedAt(d: Decision): string {
+function orderKey(d: Decision): string {
   return d.signalAvailableAt ?? d.timestamp;
 }
 
@@ -62,7 +66,7 @@ const MARKER_CLASS: Record<BadgeTone, string> = {
 export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
   const sorted = [...decisions].sort(
     (a, b) =>
-      new Date(decidedAt(b)).getTime() - new Date(decidedAt(a)).getTime(),
+      new Date(orderKey(b)).getTime() - new Date(orderKey(a)).getTime(),
   );
 
   if (sorted.length === 0) {
@@ -118,15 +122,17 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
                 <div className='flex flex-col items-end text-right'>
                   <time
                     className='num text-[11px] text-faint'
-                    dateTime={decidedAt(d)}
+                    dateTime={d.signalAvailableAt ?? undefined}
                     title={
                       d.signalAvailableAt
                         ? `Signal available at ${formatDateTime(d.signalAvailableAt)}`
-                        : `Availability not exported for this decision; showing its feature bar (${formatDateTime(d.timestamp)})`
+                        : 'The exporter never wrote an availability timestamp for this decision, so when it became knowable is unknown. The feature bar below is provenance, not a decision time.'
                     }
                     suppressHydrationWarning
                   >
-                    {formatRelative(decidedAt(d))}
+                    {d.signalAvailableAt === null
+                      ? UNAVAILABLE
+                      : formatRelative(d.signalAvailableAt)}
                   </time>
                   {/* The feature bar stays visible as provenance — which
                       candle produced the signal is genuinely useful — but it

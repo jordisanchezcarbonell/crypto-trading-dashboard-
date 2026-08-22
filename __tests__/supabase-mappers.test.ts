@@ -212,7 +212,7 @@ describe("Supabase row → domain mappers", () => {
     expect(legacy.timestamp).toBe("2026-08-22T08:00:00.000Z");
   });
 
-  it("prefers last_processing_at, falls back to last_sync, never fabricates", () => {
+  it("reads last_processing_at only, and never substitutes the feature bar", () => {
     const base = {
       id: "abc",
       run_id: "RUN-3",
@@ -235,16 +235,28 @@ describe("Supabase row → domain mappers", () => {
     expect(migrated.lastProcessingAt).toBe("2026-08-22T12:00:00.000Z");
     expect(migrated.nextProcessing).toBe("2026-08-22T16:00:00.000Z");
 
-    // Pre-002 row: `last_sync` held exactly this value under a misleading
-    // name, so reusing it is a rename, not a guess.
-    const legacy = mapHealth(
+    // REGRESSION — the exact production row that shipped the bug.
+    //
+    // The exporter never began writing `last_processing_at`, so every RUN-3
+    // snapshot carried NULL there and the feature bar (12:00Z) in
+    // `last_sync`. The old `?? row.last_sync` fallback promoted that bar to
+    // the headline, so at 16:51Z the dashboard read "last processing 14:00
+    // local, next 18:00 local, 51 min overdue" — all three derived from a
+    // bar, none from an actual processing time.
+    //
+    // `last_sync` is now inert for this field. Missing means unknown.
+    const exporterNeverWroteIt = mapHealth(
       SystemSnapshotRowSchema.parse({
         ...base,
         last_sync: "2026-08-22T12:00:00.000Z",
+        last_processing_at: null,
         next_processing: "2026-08-22T16:00:00.000Z",
       })
     );
-    expect(legacy.lastProcessingAt).toBe("2026-08-22T12:00:00.000Z");
+    expect(exporterNeverWroteIt.lastProcessingAt).toBeNull();
+    // The deprecated column is still carried through verbatim for anyone
+    // who explicitly wants it — it just no longer leaks into the cadence.
+    expect(exporterNeverWroteIt.lastSync).toBe("2026-08-22T12:00:00.000Z");
 
     // Exporter could not determine the cadence (e.g. DIVERGED sleeves).
     // NULL must survive as NULL — the old code substituted `now`, which

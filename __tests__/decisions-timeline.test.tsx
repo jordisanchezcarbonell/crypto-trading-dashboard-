@@ -68,15 +68,21 @@ describe("<DecisionsTimeline />", () => {
     expect(symbols).toEqual(["LATE-USDT", "EARLY-USDT"]);
   });
 
-  it("falls back to the feature bar for pre-002 rows and labels the fallback", () => {
+  it("shows unknown, NOT the feature bar, when availability was never exported", () => {
     const legacy: Decision = { ...baseDecision, signalAvailableAt: null };
     const { container } = render(<DecisionsTimeline decisions={[legacy]} />);
     const time = container.querySelector("time");
-    expect(time?.getAttribute("dateTime")).toBe("2026-08-22T08:00:00.000Z");
-    // The fallback is marked, never passed off as a real decision time. The
-    // caveat rides on the provenance line rather than being repeated next to
-    // the headline, which used to render "(bar) … bar <date>".
+
+    // The headline slot must not carry the bar. Rendering it here is what
+    // let a decision that could not be known until 12:00 read as though it
+    // had been made at 08:00.
+    expect(time?.getAttribute("dateTime")).toBeNull();
+    expect(time?.textContent).toBe(UNAVAILABLE);
+    expect(time?.textContent).not.toMatch(/ago|in /);
+
+    // The bar survives one line down as provenance, still marked.
     expect(screen.getByText(/availability n\/a/)).toBeInTheDocument();
+    expect(screen.getByText(/bar /)).toBeInTheDocument();
     expect(screen.queryByText("(bar)")).toBeNull();
   });
 
