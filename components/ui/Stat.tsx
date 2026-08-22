@@ -22,13 +22,16 @@ const toneClass: Record<NonNullable<StatProps["tone"]>, string> = {
   neutral: "text-faint",
 };
 
-// Colour bleeding in from the top edge, keyed to the same tone as the value.
-const glowClass: Record<NonNullable<StatProps["tone"]>, string> = {
-  default: "from-accent/40",
+// Colour bleeding in from the top edge — but ONLY where the colour carries
+// meaning. The palette reserves green/red for PnL direction (see
+// app/globals.css), and a row of four tinted hairlines turns that signal
+// into decoration: the eye stops reading colour as information. So a stat
+// whose tone is merely `default`/`neutral` gets a plain hairline, and the
+// tint is spent only on an actual gain or loss.
+const glowClass: Partial<Record<NonNullable<StatProps["tone"]>, string>> = {
   positive: "from-pos/50",
   negative: "from-neg/50",
   warning: "from-warn/50",
-  neutral: "from-edge",
 };
 
 export function Stat({
@@ -50,7 +53,7 @@ export function Stat({
         aria-hidden="true"
         className={clsx(
           "absolute inset-x-0 top-0 h-px bg-linear-to-r to-transparent",
-          glowClass[tone]
+          glowClass[tone] ?? "from-edge"
         )}
       />
       <div className="eyebrow truncate" title={label}>

@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { Badge, type BadgeTone } from '@/components/ui/Badge';
+import { EmptyState } from '@/components/ui/EmptyState';
 import type { Decision, DecisionAction } from '@/lib/domain/schemas';
 import {
   UNAVAILABLE,
@@ -65,10 +66,12 @@ export function DecisionsTimeline({ decisions }: { decisions: Decision[] }) {
   );
 
   if (sorted.length === 0) {
+    // One empty state for the whole app — see components/ui/EmptyState.
     return (
-      <div className='rounded-card border border-dashed border-edge bg-surface/40 px-6 py-12 text-center text-sm text-muted'>
-        No decisions recorded.
-      </div>
+      <EmptyState
+        title='No decisions recorded'
+        hint='Each processed bar produces a decision, even a hold.'
+      />
     );
   }
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { PageHeader } from "@/components/layout/PageHeader";
+import { HeroStat } from "@/components/ui/HeroStat";
+import { MetricStrip, type Metric } from "@/components/ui/MetricStrip";
 import { Stat } from "@/components/ui/Stat";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { EquityCurveChart } from "@/components/charts/EquityCurveChart";
@@ -18,6 +20,45 @@ export default function PerformancePage() {
   const { snapshot } = useDashboard();
   const { performance, equityCurve, trades } = snapshot;
 
+  // Risk ratios and the trade distribution: consulted, not scanned.
+  const qualityMetrics: Metric[] = [
+    {
+      label: "Sharpe",
+      value: formatOptionalNumber(performance.sharpe),
+      tone: performance.sharpe == null ? "neutral" : "default",
+    },
+    {
+      label: "Sortino",
+      value: formatOptionalNumber(performance.sortino),
+      tone: performance.sortino == null ? "neutral" : "default",
+    },
+    {
+      label: "Profit factor",
+      value: formatOptionalNumber(performance.profitFactor),
+      tone: performance.profitFactor == null ? "neutral" : "default",
+    },
+    {
+      label: "Avg trade",
+      value: formatOptionalSignedPct(performance.avgTradePct),
+      tone:
+        performance.avgTradePct == null
+          ? "neutral"
+          : performance.avgTradePct >= 0
+            ? "positive"
+            : "negative",
+    },
+    {
+      label: "Best",
+      value: formatOptionalSignedPct(performance.bestTradePct),
+      tone: performance.bestTradePct == null ? "neutral" : "positive",
+    },
+    {
+      label: "Worst",
+      value: formatOptionalSignedPct(performance.worstTradePct),
+      tone: performance.worstTradePct == null ? "neutral" : "negative",
+    },
+  ];
+
   return (
     <div className="animate-rise space-y-6">
       <PageHeader
@@ -25,62 +66,46 @@ export default function PerformancePage() {
         description="Return, risk and trade quality metrics for RUN-3."
       />
 
-      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
-        <Stat size="sm" label="Equity" value={formatUsd(performance.currentEquityUsd)} />
-        <Stat
-          size="sm"
+      {/* The weight used to run backwards here: Equity and Total return sat
+          in `size="sm"` while Best trade got the full-size treatment, so the
+          page shouted loudest about its least important number. Return leads
+          — it is what a performance page is for — then risk, then the trade
+          distribution as a strip. */}
+      <div className="grid gap-4 lg:grid-cols-4">
+        <HeroStat
+          className="lg:col-span-2"
           label="Total return"
           value={formatOptionalSignedPct(performance.totalReturnPct)}
-          tone={
-            performance.totalReturnPct == null
-              ? "neutral"
-              : performance.totalReturnPct >= 0
-                ? "positive"
-                : "negative"
+          delta={
+            performance.cagrPct == null
+              ? undefined
+              : `${formatOptionalSignedPct(performance.cagrPct)} CAGR`
           }
-        />
-        <Stat
-          size="sm"
-          label="CAGR"
-          value={formatOptionalSignedPct(performance.cagrPct)}
-          tone={
+          deltaTone={
             performance.cagrPct == null
               ? "neutral"
               : performance.cagrPct >= 0
                 ? "positive"
                 : "negative"
           }
+          caption={`${formatUsd(performance.currentEquityUsd)} equity now`}
         />
         <Stat
           size="sm"
-          label="Max DD"
+          label="Max drawdown"
           value={formatOptionalPct(performance.maxDrawdownPct)}
           tone={performance.maxDrawdownPct == null ? "neutral" : "negative"}
+          hint="Peak-to-trough, whole run"
         />
-        <Stat size="sm" label="Sharpe" value={formatOptionalNumber(performance.sharpe)} />
-        <Stat size="sm" label="Sortino" value={formatOptionalNumber(performance.sortino)} />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-4">
         <Stat
+          size="sm"
           label="Win rate"
           value={formatOptionalPct(performance.winRatePct, 1)}
-        />
-        <Stat
-          label="Profit factor"
-          value={formatOptionalNumber(performance.profitFactor)}
-        />
-        <Stat
-          label="Best trade"
-          value={formatOptionalSignedPct(performance.bestTradePct)}
-          tone={performance.bestTradePct == null ? "neutral" : "positive"}
-        />
-        <Stat
-          label="Worst trade"
-          value={formatOptionalSignedPct(performance.worstTradePct)}
-          tone={performance.worstTradePct == null ? "neutral" : "negative"}
+          hint={`${performance.totalTrades} closed trades`}
         />
       </div>
+
+      <MetricStrip metrics={qualityMetrics} />
 
       <Card>
         <CardHeader title="Equity curve" />
@@ -89,7 +114,7 @@ export default function PerformancePage() {
         </CardBody>
       </Card>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-4 xl:grid-cols-2">
         <Card>
           <CardHeader title="Drawdown" />
           <CardBody>

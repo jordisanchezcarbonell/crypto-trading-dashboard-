@@ -22,23 +22,35 @@ const columns: Column<Position>[] = [
     header: "Side",
     render: (r) => <SideTag side={r.side} />,
   },
-  { key: "qty", header: "Qty", align: "right", render: (r) => formatQty(r.qty) },
+  // Column priority for narrow viewports. Symbol, Side and uPnL are the
+  // reason anyone opens this table, so they never drop. Everything else
+  // falls away in reverse order of usefulness as the viewport shrinks.
+  {
+    key: "qty",
+    header: "Qty",
+    align: "right",
+    hideBelow: "md",
+    render: (r) => formatQty(r.qty),
+  },
   {
     key: "entry",
     header: "Entry",
     align: "right",
+    hideBelow: "lg",
     render: (r) => formatOptionalUsd(r.entryPrice),
   },
   {
     key: "mark",
     header: "Mark",
     align: "right",
+    hideBelow: "sm",
     render: (r) => formatOptionalUsd(r.markPrice),
   },
   {
     key: "notional",
     header: "Notional",
     align: "right",
+    hideBelow: "xl",
     render: (r) => formatUsd(r.notionalUsd),
   },
   {
@@ -57,12 +69,14 @@ const columns: Column<Position>[] = [
   {
     key: "strategy",
     header: "Strategy",
+    hideBelow: "lg",
     render: (r) => <span className="text-muted">{r.strategy}</span>,
   },
   {
     key: "opened",
     header: "Opened",
     align: "right",
+    hideBelow: "md",
     render: (r) => (
       <span className="text-muted" suppressHydrationWarning>
         {formatRelative(r.openedAt)}
@@ -71,14 +85,22 @@ const columns: Column<Position>[] = [
   },
 ];
 
-export function PositionsTable({ positions }: { positions: Position[] }) {
+export function PositionsTable({
+  positions,
+  frame,
+}: {
+  positions: Position[];
+  frame?: boolean;
+}) {
   return (
     <DataTable
       rows={positions}
       columns={columns}
       rowKey={(p) => p.id}
-      emptyLabel="No open positions."
+      emptyLabel="No open positions"
+      emptyHint="Positions appear here once a strategy opens one."
       caption="Open positions with entry, mark price and unrealized PnL"
+      frame={frame}
     />
   );
 }
