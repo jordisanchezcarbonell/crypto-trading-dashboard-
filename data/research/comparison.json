@@ -1,0 +1,15 @@
+{
+  "strategyIds": ["ema-v2-risk", "donchian-v1", "cross-sectional-momentum-v1"],
+  "correlations": [
+    { "a": "ema-v2-risk", "b": "donchian-v1", "value": null },
+    { "a": "ema-v2-risk", "b": "cross-sectional-momentum-v1", "value": null },
+    { "a": "donchian-v1", "b": "cross-sectional-momentum-v1", "value": null }
+  ],
+  "source": {
+    "label": "Strategy-return correlations computed but not persisted",
+    "ref": "crypto-trading-lab@research/platform — no correlation artefact committed",
+    "scope": "Pairwise correlation of strategy returns over the common research window",
+    "derivedFields": [],
+    "caveat": "The pairwise strategy-return correlations were computed in the cross-sectional-momentum-v1 diagnostics but are not persisted in the repository, so no value is rendered here. Separately: the only correlations published as an artefact (reports/cross_asset_validation.md) are between ASSETS inside EMA-v1, not between strategies. They answer a different question and are deliberately not reused here."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "mean-reversion-v1",
+  "label": "MeanReversion-v1",
+  "summary": "Long-only z-score reversion: enter below -2.0 on a 30-bar causal z-score, exit at 0.0, full-cash sizing and a 10% stop from the entry fill.",
+  "parameters": [
+    { "label": "Lookback", "value": "30 bars" },
+    { "label": "Entry z-score", "value": -2.0 },
+    { "label": "Exit z-score", "value": 0.0 },
+    { "label": "Sizing", "value": "full_cash_net_of_fee (fraction 1.0)" },
+    { "label": "Stop", "value": "fixed_fraction_from_entry_fill 10%" },
+    { "label": "Reentry", "value": "blocked_until_flat_signal" }
+  ],
+  "states": [
+    {
+      "state": "REJECTED",
+      "evidence": "Recorded as rejected in the lab history: commit fad0f06 \"research: record rejected mean reversion v1\" (research/platform). No metrics accompany the record in the repository."
+    }
+  ],
+  "metrics": null,
+  "equity": null,
+  "equityUnavailableReason": "No metrics or equity series accompany the rejection record.",
+  "temporalBlocks": null,
+  "temporalUnavailableReason": "No metrics accompany the rejection record.",
+  "frictionScenarios": null,
+  "frictionUnavailableReason": "No metrics accompany the rejection record.",
+  "parameterGrid": null,
+  "parameterUnavailableReason": "No parameter sweep accompanies the rejection record.",
+  "provenance": {
+    "strategyName": "mean-reversion-v1",
+    "version": "1.0.0",
+    "strategyCodeHash": null,
+    "experimentId": null,
+    "protocol": "protocol-v1",
+    "protocolHash": "e2e282a636281f30a5065b2038bb3db75d4436ef6104b9bf051cc455c19d856d",
+    "protocolSemanticHash": null,
+    "datasetId": "binance-spot-4h-frozen-2026-08-19",
+    "datasetManifestSha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+    "sourceCommit": null,
+    "specPath": "src/crypto_trading_lab/research/specs/baselines/mean-reversion-v1.toml",
+    "windowStartPolicy": "per_asset_group (reference assets pinned to 2017-08-17T04:00:00Z, scoring assets first_available_bar)",
+    "windowStart": null,
+    "windowEnd": "2026-08-19T12:00:00+00:00",
+    "segment": "IN_SAMPLE"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "donchian-v1",
+  "label": "Donchian-v1",
+  "summary": "Long-only Donchian breakout: entry on a 120-bar prior-high channel, exit on a 60-bar prior-low channel, full-cash sizing and a 10% stop from the entry fill.",
+  "parameters": [
+    { "label": "Entry lookback", "value": "120 bars" },
+    { "label": "Exit lookback", "value": "60 bars" },
+    { "label": "Sizing", "value": "full_cash_net_of_fee (fraction 1.0)" },
+    { "label": "Stop", "value": "fixed_fraction_from_entry_fill 10%" },
+    { "label": "Reentry", "value": "blocked_until_flat_signal" },
+    { "label": "Rebalance", "value": "never" }
+  ],
+  "states": [
+    {
+      "state": "RESULTS_NOT_EXPORTED",
+      "evidence": "Strategy and spec committed (f75f325, research/platform). A baseline run exists for this spec — it was reproduced as a comparison baseline alongside cross-sectional-momentum-v1 — but no result artefact is persisted in the lab repository."
+    }
+  ],
+  "metrics": null,
+  "equity": null,
+  "equityUnavailableReason": "Baseline results exist but are not yet persisted in the repository.",
+  "temporalBlocks": null,
+  "temporalUnavailableReason": "No temporal block split has been run for this candidate.",
+  "frictionScenarios": null,
+  "frictionUnavailableReason": "No execution-cost stress has been run for this candidate.",
+  "parameterGrid": null,
+  "parameterUnavailableReason": "No parameter sweep has been run for this candidate. The committed spec declares exactly one configuration (120/60).",
+  "provenance": {
+    "strategyName": "donchian-v1",
+    "version": "1.0.0",
+    "strategyCodeHash": null,
+    "experimentId": null,
+    "protocol": "protocol-v1",
+    "protocolHash": "e2e282a636281f30a5065b2038bb3db75d4436ef6104b9bf051cc455c19d856d",
+    "protocolSemanticHash": null,
+    "datasetId": "binance-spot-4h-frozen-2026-08-19",
+    "datasetManifestSha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+    "sourceCommit": null,
+    "specPath": "src/crypto_trading_lab/research/specs/baselines/donchian-v1.toml",
+    "windowStartPolicy": "per_asset_group (reference assets pinned to 2017-08-17T04:00:00Z, scoring assets first_available_bar)",
+    "windowStart": null,
+    "windowEnd": "2026-08-19T12:00:00+00:00",
+    "segment": "IN_SAMPLE"
+  }
+}

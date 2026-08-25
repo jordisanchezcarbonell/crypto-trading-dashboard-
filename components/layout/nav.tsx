@@ -66,6 +66,14 @@ const CompareIcon = (p: IconProps) => (
   </Icon>
 );
 
+const ResearchIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M10 3h4" />
+    <path d="M11 3v6.2L5.6 18A2 2 0 0 0 7.3 21h9.4a2 2 0 0 0 1.7-3L13 9.2V3" />
+    <path d="M8.5 14h7" />
+  </Icon>
+);
+
 const SystemIcon = (p: IconProps) => (
   <Icon {...p}>
     <rect x="3" y="4" width="18" height="7" rx="2" />
@@ -81,6 +89,7 @@ export const NAV = [
   { href: "/decisions", label: "Decisions", Icon: DecisionsIcon },
   { href: "/performance", label: "Performance", Icon: PerformanceIcon },
   { href: "/compare", label: "Compare", Icon: CompareIcon },
+  { href: "/research", label: "Research", Icon: ResearchIcon },
   { href: "/system", label: "System", Icon: SystemIcon },
 ] as const;
 

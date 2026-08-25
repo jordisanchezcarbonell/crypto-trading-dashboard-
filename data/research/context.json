@@ -1,0 +1,135 @@
+{
+  "compiledFrom": [
+    "crypto-trading-lab@research/platform:src/crypto_trading_lab/research/specs/protocol/protocol-v1.toml",
+    "crypto-trading-lab@research/platform:src/crypto_trading_lab/research/specs/protocol/multi-asset-protocol-v1.toml",
+    "crypto-trading-lab@research/platform:src/crypto_trading_lab/research/specs/datasets/binance-spot-4h-frozen-2026-08-19.toml",
+    "crypto-trading-lab@research/platform:src/crypto_trading_lab/research/specs/references/run3-2026-08-22.toml",
+    "crypto-trading-lab@research/platform:docs/research_ema_v2_forward_oos_contract.md",
+    "crypto-trading-lab:reports/phase_1_8.md"
+  ],
+  "datasets": [
+    {
+      "id": "binance-spot-4h-frozen-2026-08-19",
+      "exchange": "binance",
+      "marketType": "spot",
+      "timeframe": "4h",
+      "manifestSha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+      "provenance": "frozen snapshots phase_1_5_2026-08-19 + phase_1_6_2026-08-19",
+      "lastHistoricalBar": "2026-08-19T12:00:00+00:00",
+      "assets": [
+        {
+          "symbol": "BTC/USDT",
+          "rows": 19721,
+          "firstTimestamp": "2017-08-17T04:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "ETH/USDT",
+          "rows": 19721,
+          "firstTimestamp": "2017-08-17T04:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "SOL/USDT",
+          "rows": 13197,
+          "firstTimestamp": "2020-08-11T04:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "BNB/USDT",
+          "rows": 19236,
+          "firstTimestamp": "2017-11-06T00:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "XRP/USDT",
+          "rows": 18167,
+          "firstTimestamp": "2018-05-04T08:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "ADA/USDT",
+          "rows": 18270,
+          "firstTimestamp": "2018-04-17T04:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "LINK/USDT",
+          "rows": 16629,
+          "firstTimestamp": "2019-01-16T08:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "AVAX/USDT",
+          "rows": 12945,
+          "firstTimestamp": "2020-09-22T04:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        },
+        {
+          "symbol": "DOGE/USDT",
+          "rows": 15611,
+          "firstTimestamp": "2019-07-05T12:00:00+00:00",
+          "lastTimestamp": "2026-08-19T12:00:00+00:00"
+        }
+      ]
+    }
+  ],
+  "protocols": [
+    {
+      "id": "protocol-v1",
+      "version": "protocol-v1",
+      "sha256": "e2e282a636281f30a5065b2038bb3db75d4436ef6104b9bf051cc455c19d856d",
+      "timeframe": "4h",
+      "periodsPerYear": 2191.5,
+      "universe": [
+        "BTC/USDT",
+        "ETH/USDT",
+        "SOL/USDT",
+        "BNB/USDT",
+        "XRP/USDT",
+        "ADA/USDT",
+        "LINK/USDT",
+        "AVAX/USDT",
+        "DOGE/USDT"
+      ],
+      "signalTimestamp": "Close[t]",
+      "executionTimestamp": "Open[t+1]",
+      "feeRate": 0.001,
+      "spreadBps": 5.0,
+      "slippageBps": 5.0,
+      "initialCapitalLabel": "10,000 per asset (isolated sleeves)",
+      "windowEnd": "2026-08-19T12:00:00+00:00",
+      "lockedAt": "2026-08-22T00:00:00+00:00",
+      "referenceId": "run3-2026-08-22",
+      "sourceCommit": "f60a7264db3f67d8e055ed6d54cfe3c0a2be1878"
+    },
+    {
+      "id": "multi-asset-protocol-v1",
+      "version": "multi-asset-protocol-v1",
+      "sha256": "ee0ef61c84e5a0415f4e8a71f680fba037975d419abfb157207174d5e79eff0e",
+      "timeframe": "4h",
+      "periodsPerYear": 2191.5,
+      "universe": [
+        "BTC/USDT",
+        "ETH/USDT",
+        "SOL/USDT",
+        "BNB/USDT",
+        "XRP/USDT",
+        "ADA/USDT",
+        "LINK/USDT",
+        "AVAX/USDT",
+        "DOGE/USDT"
+      ],
+      "signalTimestamp": "daily_utc_hour 00:00 UTC (decision)",
+      "executionTimestamp": "atomic_common_open (rebalance)",
+      "feeRate": 0.001,
+      "spreadBps": 5.0,
+      "slippageBps": 5.0,
+      "initialCapitalLabel": "90,000 shared capital",
+      "windowEnd": "2026-08-19T12:00:00+00:00",
+      "lockedAt": "2026-08-25T00:00:00+00:00",
+      "referenceId": "run3-2026-08-22",
+      "sourceCommit": "f60a7264db3f67d8e055ed6d54cfe3c0a2be1878"
+    }
+  ]
+}
