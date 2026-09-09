@@ -36,3 +36,35 @@ npm run build
 El bundle contiene todas las curvas resumidas, pero el servidor solo envía al cliente las del activo seleccionado. Métricas y correlaciones se calculan antes de reducir las curvas. La correlación exige timestamps idénticos. Las ventanas entre estrategias se validan en el loader.
 
 Los valores no finitos se exportan como null. Las unidades porcentuales se convierten explícitamente desde las fracciones del motor, incluida la exposición. No hay métricas de cartera agregada ni etiquetas OOS inventadas.
+
+## Vista fuera de muestra
+
+`/research/out-of-sample` lee `data/research/export/`, un contrato distinto del bundle de
+arriba: lo publica el exporter del repositorio de research (`crypto_trading_lab.research.export`),
+no `scripts/research_export.py`.
+
+La vista muestra **solo la reserva con costes duplicados**. Es un segmento fijo y no un
+selector a propósito: un resultado de desarrollo y uno de reserva son idénticos como números
+y significan lo contrario, así que un toggle respondería otra pregunta bajo el mismo titular.
+Cada fila del contrato lleva `segment`, `partition_side` y `stressed`, y son campos
+obligatorios del esquema, no decoración.
+
+Los veredictos se derivan de los datos por una regla escrita en la propia página, y los
+descartes se renderizan junto a las supervivientes: enseñar solo lo que pasó el filtro
+metería sesgo de supervivencia en el propio informe.
+
+### Por qué hay dos caminos de datos
+
+Ninguno es superconjunto del otro. El bundle tiene curvas por activo y matriz de correlación
+que el contrato no tiene; el contrato tiene segmentos y estrés que el bundle no puede
+expresar. Unificarlos hoy significaría diseñar una forma común antes de saber qué necesita
+la investigación que la usará.
+
+Lo que sí está cubierto es el riesgo real: `__tests__/research-paths-agree.test.ts` comprueba
+que los dos coinciden **exactamente** en todos los números que ambos publican. No elimina la
+duplicación; elimina que pueda divergir en silencio.
+
+## Contexto e interpretación
+
+`docs/research-phase-closure.md` resume qué se midió, qué se descartó y qué no demuestran
+estas vistas. Conviene leerlo antes de sacar conclusiones de un gráfico.
