@@ -25,14 +25,56 @@ const METRICS: [keyof StrategyView, string, string, number][] = [
 ];
 
 export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
-  const survivors = data.strategies.filter((s) => s.verdict !== "REJECTED");
+  // Widest first: it is the evidence that governs. Two universes are never
+  // shown together -- averaging nine hand-picked assets with 102 rule-selected
+  // ones would describe neither.
+  const [scopeIndex, setScopeIndex] = useState(0);
+  const scope = data.scopes[scopeIndex];
+  return (
+    <div className="animate-rise space-y-6">
+      <nav aria-label="Universo" className="flex flex-wrap gap-2">
+        {data.scopes.map((option, index) => (
+          <button
+            key={option.size}
+            onClick={() => setScopeIndex(index)}
+            aria-pressed={index === scopeIndex}
+            className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
+              index === scopeIndex
+                ? "border-accent/50 bg-accent/10 text-accent"
+                : "border-line text-muted hover:bg-raised"
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
+      </nav>
+      <p className="rounded-lg border border-line bg-base/60 px-4 py-3 text-xs leading-relaxed text-muted">
+        {scope.note}
+      </p>
+      {/* Keyed by scope so a selection never carries across universes. */}
+      <ScopePanel key={scope.size} scope={scope} rule={data.rule} timeframe={data.timeframe} />
+    </div>
+  );
+}
+
+function ScopePanel({
+  scope,
+  rule,
+  timeframe,
+}: {
+  scope: OutOfSampleView["scopes"][number];
+  rule: string;
+  timeframe: string;
+}) {
+  const { strategies } = scope;
+  const survivors = strategies.filter((s) => s.verdict !== "REJECTED");
   const [enabled, setEnabled] = useState<string[]>(survivors.map((s) => s.strategy));
   const [view, setView] = useState<"equity" | "drawdown">("equity");
-  const visible = data.strategies.filter((s) => enabled.includes(s.strategy));
+  const visible = strategies.filter((s) => enabled.includes(s.strategy));
 
   const chart = useMemo(() => {
     const rows = new Map<number, Record<string, number>>();
-    for (const s of data.strategies) {
+    for (const s of strategies) {
       for (const point of s.curve) {
         const row = rows.get(point.ts) ?? { ts: point.ts };
         row[s.strategy] = view === "equity" ? point.equity : point.drawdown;
@@ -40,7 +82,7 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
       }
     }
     return [...rows.values()].sort((a, b) => a.ts - b.ts);
-  }, [data.strategies, view]);
+  }, [strategies, view]);
 
   const toggle = (id: string) =>
     setEnabled((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -53,7 +95,7 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
             FUERA DE MUESTRA · COSTES DUPLICADOS
           </span>
           <span className="text-xs text-muted">
-            {data.strategies.length} estrategias · {data.universe.length} activos · corte pre-registrado
+            {strategies.length} estrategias · {scope.size} activos · corte pre-registrado
           </span>
         </div>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink">Qué sobrevive a la condición más dura.</h1>
@@ -64,9 +106,9 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
         </p>
         <div className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-5 lg:grid-cols-4">
           {[
-            ["PERIODO UTC", `${data.startAt.slice(0, 10)} → ${data.endAt.slice(0, 10)}`],
-            ["CAPITAL INICIAL", `${number(data.initialCapital, 0)} USDT`],
-            ["EJECUCIÓN", `Cierre t → apertura t+1 · ${data.timeframe}`],
+            ["PERIODO UTC", `${scope.startAt.slice(0, 10)} → ${scope.endAt.slice(0, 10)}`],
+            ["CAPITAL INICIAL", `${number(scope.initialCapital, 0)} USDT`],
+            ["EJECUCIÓN", `Cierre t → apertura t+1 · ${timeframe}`],
             ["FRICCIONES", "Comisión, spread y slippage ×2"],
           ].map(([label, value]) => (
             <div key={label}>
@@ -83,9 +125,9 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
           subtitle="La regla se aplica a los datos; no es una opinión editorial. Puedes discrepar de ella sin tener que confiar en el resultado."
         />
         <CardBody>
-          <p className="mb-4 rounded-lg border border-line bg-base/60 px-4 py-3 text-xs leading-relaxed text-muted">{data.rule}</p>
+          <p className="mb-4 rounded-lg border border-line bg-base/60 px-4 py-3 text-xs leading-relaxed text-muted">{rule}</p>
           <div className="grid gap-3 min-[480px]:grid-cols-2 xl:grid-cols-3">
-            {data.strategies.map((s, index) => (
+            {strategies.map((s, index) => (
               <label
                 key={s.strategy}
                 className={`cursor-pointer rounded-xl border p-4 transition-colors ${
@@ -167,7 +209,7 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
                       key={s.strategy}
                       dataKey={s.strategy}
                       name={s.strategy}
-                      stroke={COLORS[data.strategies.findIndex((item) => item.strategy === s.strategy) % COLORS.length]}
+                      stroke={COLORS[strategies.findIndex((item) => item.strategy === s.strategy) % COLORS.length]}
                       strokeWidth={1.8}
                       dot={false}
                       connectNulls
@@ -234,7 +276,7 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
         <CardHeader title="Trazabilidad" subtitle="Cada fila se puede reproducir desde su identidad." />
         <CardBody>
           <div className="space-y-2">
-            {data.strategies.map((s) => (
+            {strategies.map((s) => (
               <details key={s.strategy} className="rounded-lg border border-line p-3">
                 <summary className="cursor-pointer text-sm text-ink">
                   {s.strategy} — {VERDICT[s.verdict].text}
@@ -253,7 +295,15 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
           <ul className="mt-5 space-y-2 text-xs leading-relaxed text-muted">
             <li>• Histórico sobre datos congelados. No demuestra rentabilidad futura.</li>
             <li>• El corte fuera de muestra se fijó antes de ejecutar nada sobre este lado.</li>
-            <li>• El universo se eligió a posteriori: el sesgo de supervivencia no lo elimina el framework.</li>
+            <li>
+              • <strong className="text-ink">Estos nueve activos se eligieron a mano, y eso infla
+              los retornos.</strong> Medido después sobre 104 activos seleccionados por regla,
+              comprar y mantener rinde un CAGR mediano del −11,1% frente al +65,9% de estos
+              nueve. La ventaja relativa frente a mantener sí se sostiene fuera de ellos —confirmada
+              después sobre 102 activos nunca vistos, donde gana en el 87%—; la magnitud
+              absoluta de esta página, no.
+            </li>
+            <li>• El sesgo de supervivencia no lo elimina el framework: son los pares listados hoy.</li>
             <li>• Ninguna estrategia está aprobada para operar con dinero real.</li>
           </ul>
         </CardBody>

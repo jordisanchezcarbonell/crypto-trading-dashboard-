@@ -68,3 +68,38 @@ duplicación; elimina que pueda divergir en silencio.
 
 `docs/research-phase-closure.md` resume qué se midió, qué se descartó y qué no demuestran
 estas vistas. Conviene leerlo antes de sacar conclusiones de un gráfico.
+
+## Aviso sobre la magnitud de las cifras
+
+Ambas vistas muestran el **universo de nueve activos**, elegido a mano. Medido después sobre
+104 activos seleccionados por regla mecánica, comprar y mantener rinde un CAGR mediano del
+**−11,1%** frente al **+65,9%** de esos nueve: aquellos activos subieron de forma
+excepcional, y los retornos absolutos que se ven aquí son en buena parte una propiedad de esa
+selección.
+
+Lo que sí se sostiene fuera de ellos es la ventaja **relativa**: comparada de forma pareada
+contra mantener el mismo activo en la misma ventana, EMA-v2-risk gana en 71 de 95 activos
+que nunca vio. Pero su Sharpe pasa de 1,42 a 0,34.
+
+Contexto completo en `docs/research-phase-closure.md`, sección 7.
+
+## Los dos universos, y por qué no se mezclan
+
+`/research/out-of-sample` muestra ahora **dos universos**, seleccionables y nunca a la vez:
+
+- **102 activos por regla** — la evidencia que manda. Seleccionados por regla mecánica; ninguna
+  estrategia los vio antes.
+- **9 activos elegidos a mano** — lo que el proyecto midió durante casi toda su vida. Sus
+  retornos absolutos están inflados por esa elección.
+
+No es un filtro sobre la misma tabla: son ámbitos separados, con el ancho primero, y el panel
+se remonta al cambiar de universo para que una selección no viaje de uno a otro. Promediarlos
+describiría a ninguno de los dos — comprar y mantener rindió +65,9% de CAGR mediano en los
+nueve y −11,1% en el resto.
+
+Los dos caminos de datos **siguen conviviendo**, y es deliberado. El contrato cubre ahora los
+dos universos en la vista fuera de muestra, pero sigue sin tener curvas por activo ni matriz
+de correlación, que es lo que usa `/research/compare`. Ninguno es superconjunto del otro.
+
+`__tests__/research-paths-agree.test.ts` comprueba que coinciden **exactamente** en todos los
+números que ambos publican. No elimina la duplicación; elimina que pueda divergir en silencio.

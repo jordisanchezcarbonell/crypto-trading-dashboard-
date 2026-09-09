@@ -123,15 +123,22 @@ export type StrategyView = {
   curve: { ts: number; equity: number; drawdown: number }[];
 };
 
-export type OutOfSampleView = {
-  timeframe: string;
-  universe: string[];
-  cutoff: string;
+export type Scope = {
+  /** Assets in the protocol universe: 9 hand-picked, or 102 selected by rule. */
+  size: number;
+  label: string;
+  note: string;
   startAt: string;
   endAt: string;
   initialCapital: number;
   strategies: StrategyView[];
+};
+
+export type OutOfSampleView = {
+  timeframe: string;
   rule: string;
+  /** Widest scope first: it is the evidence that governs. */
+  scopes: Scope[];
 };
 
 function read<T>(name: string, schema: z.ZodType<T>): T[] {
@@ -150,12 +157,18 @@ function verdictFor(positive: number, total: number): { verdict: Verdict; reason
 }
 
 /**
- * The stressed reserve, and nothing else.
+ * The stressed reserve, split by universe and never merged.
  *
- * Selecting one segment rather than offering a toggle is the point: this view
- * answers "what survived the hardest condition", and a toggle that silently
- * swapped in development numbers would answer a different question under the
- * same headline.
+ * Two scopes exist and they answer different questions. Nine hand-picked assets
+ * are what the project measured for most of its life; 102 selected by rule are
+ * what it measured last, and that is the evidence that governs -- buy and hold
+ * returned a +65.9% median CAGR on the nine and -11.1% on the rest, so the two
+ * are not interchangeable and a chart that averaged them would be describing
+ * neither.
+ *
+ * They are returned as separate scopes rather than a filter for the same reason
+ * this view fixes a single segment: a control that silently swapped one for the
+ * other would answer a different question under the same headline.
  */
 export function loadOutOfSample(): OutOfSampleView {
   const manifest = manifestSchema.parse(
@@ -184,12 +197,12 @@ export function loadOutOfSample(): OutOfSampleView {
     curves.set(row.experiment_id, list);
   }
 
-  const strategies: StrategyView[] = selected.map((row) => {
+  const build = (row: (typeof selected)[number]): StrategyView => {
     const aggregate = metrics.get(row.experiment_id);
     const perAsset = byExperiment.get(row.experiment_id) ?? [];
-    if (!aggregate) throw new Error(`Sin métricas agregadas para ${row.experiment_id}`);
+    if (!aggregate) throw new Error(`Sin métricas agregadas para `);
     if (perAsset.length !== row.universe.length) {
-      throw new Error(`${row.strategy}: ${perAsset.length} activos para un universo de ${row.universe.length}`);
+      throw new Error(`:  activos para un universo de `);
     }
     const positive = perAsset.filter((asset) => asset.total_return_pct > 0).length;
     const { verdict, reason } = verdictFor(positive, perAsset.length);
@@ -217,20 +230,27 @@ export function loadOutOfSample(): OutOfSampleView {
         }))
         .sort((a, b) => a.ts - b.ts),
     };
-  });
-
-  const ranked = [...strategies].sort((a, b) => b.sharpe - a.sharpe);
-  const first = selected[0];
-  const aggregate = metrics.get(first.experiment_id);
-
-  return {
-    timeframe: manifest.timeframe,
-    universe: first.universe,
-    cutoff: first.start_at,
-    startAt: first.start_at,
-    endAt: first.end_at,
-    initialCapital: aggregate ? aggregate.initial_capital : 0,
-    strategies: ranked,
-    rule: RULE.text,
   };
+
+  const sizes = [...new Set(selected.map((row) => row.universe.length))].sort((a, b) => b - a);
+  const scopes: Scope[] = sizes.map((size) => {
+    const rows = selected.filter((row) => row.universe.length === size);
+    const strategies = rows.map(build).sort((a, b) => b.sharpe - a.sharpe);
+    const aggregate = metrics.get(rows[0].experiment_id);
+    const wide = size > 9;
+    return {
+      size,
+      label: wide ? ` activos por regla` : ` activos elegidos a mano`,
+      note: wide
+        ? "Universo seleccionado por regla mecánica. Es la evidencia que manda: ninguna de estas estrategias vio estos activos antes."
+        : "Universo elegido a mano. Sus retornos absolutos están inflados por esa elección: comprar y mantener rindió aquí un CAGR mediano del +65,9% frente al −11,1% del universo por regla.",
+      startAt: rows[0].start_at,
+      endAt: rows[0].end_at,
+      initialCapital: aggregate ? aggregate.initial_capital : 0,
+      strategies,
+    };
+  });
+  if (scopes.length === 0) throw new Error("El contrato no contiene ningún universo");
+
+  return { timeframe: manifest.timeframe, rule: RULE.text, scopes };
 }

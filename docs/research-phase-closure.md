@@ -1,9 +1,10 @@
 # Cierre de fase — Plataforma de research y búsqueda de estrategias
 
-> Copia del informe de cierre que vive en `crypto-trading-lab`, rama `research/platform`,
-> en `docs/research_phase_closure.md`. Se duplica aquí para que quien lea solo el dashboard
-> sepa qué muestran estas vistas y qué no. **El original manda**: si divergen, gana el del
-> repositorio de research, que es donde están los datos y los tests.
+> Copia del informe que vive en `crypto-trading-lab`, rama `research/platform`. **El original
+> manda**: si divergen, gana el del repositorio de research, donde están los datos y los tests.
+>
+> **Lee la sección 7 antes de interpretar cualquier gráfico de este dashboard.** Las vistas
+> muestran el universo de nueve activos; la evidencia que manda está medida sobre 102.
 
 Fecha: 2026-09-09. Rama `research/platform`. RUN-3 intacto: ni una línea de su código, sus
 SQLite, sus runners o su exporter se ha tocado.
@@ -21,6 +22,11 @@ respuesta es:
 No es el resultado que se buscaba, y es un resultado. Se evaluaron nueve reglas distintas
 bajo un protocolo idéntico, dos de ellas públicas y cuatro diseñadas específicamente para
 descorrelacionar. Ninguna sobrevivió a las cuatro condiciones.
+
+**La evidencia definitiva está en la sección 7**, no en la tabla de abajo. Esta se midió sobre
+nueve activos elegidos a mano; R8 la reprodujo sobre **102 activos nunca vistos** y es la que
+manda. Los números de aquí siguen porque describen lo que se sabía en cada momento, y porque
+borrar el camino haría el resultado menos creíble, no más.
 
 ### Las cuatro condiciones, medidas
 
@@ -149,7 +155,104 @@ funding era la barata de las tres y ya está probada y agotada para esta reserva
 
 ---
 
-## 7. Estado
+## 7. Lo que vino después, y es lo que manda
 
-Fase **cerrada**. Nada promovido a paper, nada desplegado, nada operando con dinero real.
-RUN-3 sigue exactamente como estaba.
+El trabajo siguió tras el primer cierre, y cuatro hallazgos modifican lo de arriba lo
+bastante como para que queden aquí y no en un anexo. El último es la evidencia más fuerte que
+este proyecto puede producir.
+
+### El universo era el que estaba rindiendo (R7)
+
+Los nueve activos se eligieron a mano. Sustituida esa elección por una regla mecánica, el
+universo pasa a 104 activos, y comprar y mantener revela lo que estaba pasando:
+
+| | CAGR mediano del control |
+|---|---:|
+| Los 9 originales | **+65,9%** |
+| Los 95 nuevos | **-11,1%** |
+
+**Todos los retornos absolutos que este proyecto ha citado están inflados por esa
+selección.** El 6624% de EMA-v1 en BTC o el 19903% en BNB describen aquellos activos, no la
+regla.
+
+Pero la ventaja *relativa* sí generaliza, y mejor de lo que parecía. Comparada de forma
+pareada contra mantener el mismo activo en la misma ventana, EMA-v2-risk gana en **71 de 95**
+activos nuevos, frente a solo 2 de 7 en los originales. Y es la única con mediana positiva
+fuera de los nueve: **+20,0%** donde el control da -35,8%, con una caída del -28,4% frente
+al -94,9%.
+
+La conclusión sobre EMA-v2-risk sale **reforzada**. Lo que cae es la magnitud esperable: el
+Sharpe pasa de 1,42 a 0,34 en un activo cualquiera.
+
+### Un banco de pruebas, y cuánto vale (R6)
+
+Hay una criba de desarrollo que no puede leer la reserva —rechaza por excepción cualquier
+spec que no sea del lado de desarrollo— y que juzga cinco puertas: amplitud, ventaja
+corregida por multiplicidad, rotación, resistencia a fricciones y correlación con las
+incumbentes.
+
+Se pasó a las cuatro candidatas. Tres REJECT, y una ADVANCE: `funding-pressure-v1`, que era
+justamente la única con resultado de reserva ya conocido, donde había sido **rechazada**.
+
+Así que la criba aprobó algo que después falló, y eso calibra para qué sirve:
+
+| Puerta | Desarrollo | Reserva | ¿Transfirió? |
+|---|---|---|---|
+| Diversificación | 0,50 | 0,49 | **sí** |
+| Fricciones | 90,5% | ~93% | **sí** |
+| Rotación | 17,6 | 30,4 | sí |
+| Amplitud | 7/7 | 3/7 | **no** |
+| Ventaja | 0,892 | 0,118 | **no** |
+
+**Las propiedades estructurales de una regla transfieren; su rendimiento no.** El valor de
+la criba está en sus REJECT: ahorró tres miradas a la reserva. Un ADVANCE solo dice que
+ninguna razón barata para descartarla se cumple.
+
+### Funding: descargado, probado, agotado
+
+Dataset congelado de funding de perpetuos, unido a las velas con regla causal verificada
+sobre 56.336 barras sin un solo desajuste. Dos candidatas, ambas rechazadas. La hipótesis de
+carry salió **invertida**: el funding alto predice retornos más altos. Y aunque el funding
+resultó ser la primera señal con información *e* independencia del régimen EMA
+(concordancia 0,59), la regla construida sobre ella no sobrevivió a la reserva.
+
+### La conclusión, confirmada fuera de los nueve (R8)
+
+Quedaba la duda razonable de si la ventaja era una propiedad de los nueve activos. Ejecución
+pre-registrada sobre **102 activos nunca vistos**, lado de reserva, costes duplicados:
+
+| | Neto med. | Caída med. | Positivos | Gana a B&H |
+|---|---:|---:|---:|---:|
+| Buy & hold | **-72,0%** | -93,8% | 18/102 | — |
+| EMA-v1 | -27,8% | -78,2% | 32/102 | 74/102 |
+| **EMA-v2-risk** | **+13,9%** | **-43,0%** | **69/102** | **89/102 (87%)** |
+
+**4 de 4 criterios pre-registrados.** La ventaja **no** era una propiedad de la selección de
+activos: EMA-v2-risk gana al control en el 87% de activos que nunca vio, y es rentable en un
+mercado que perdió el 72%.
+
+Lo que sigue sin establecerse, con la misma claridad: **no es independencia temporal**. Mismo
+periodo 2023-2026. Generaliza entre activos, no en el tiempo. La magnitud es modesta (CAGR
++3,6%, Sharpe 0,271) y la caída esperable en un activo cualquiera es **-43%**, peor que
+cualquier cifra que hubiéramos citado.
+
+## 8. Qué haría falta para el siguiente paso
+
+Lo único que R8 no puede dar es **independencia temporal**: es el mismo periodo 2023-2026 que
+ya habíamos minado. Generaliza entre activos, no en el tiempo.
+
+Eso sí exige esperar. A la frecuencia de operación observada, una ventana de un año da unas
+45 operaciones agregadas — el mínimo defendible. El protocolo para rodar la frontera está
+escrito en `research_boundary_roll.md`, junto con la razón por la que hacerlo antes no compra
+nada: congelar no crea frescura.
+
+Hasta entonces, la criba permite probar candidatas sin gastar evidencia, y el universo ancho
+da 102 activos en vez de 9 para hacerlo.
+
+## 9. Estado
+
+Fase **cerrada**. 11 estrategias, 225 experimentos, 203 specs versionados, 1.443 tests, 104
+activos por regla mecánica, 96 ensayos declarados.
+
+Nada promovido a paper, nada desplegado, nada operando con dinero real. RUN-3 sigue
+exactamente como estaba, anclado a su tag.
