@@ -253,7 +253,14 @@ export function OutOfSampleCompare({ data }: { data: OutOfSampleView }) {
           <ul className="mt-5 space-y-2 text-xs leading-relaxed text-muted">
             <li>• Histórico sobre datos congelados. No demuestra rentabilidad futura.</li>
             <li>• El corte fuera de muestra se fijó antes de ejecutar nada sobre este lado.</li>
-            <li>• El universo se eligió a posteriori: el sesgo de supervivencia no lo elimina el framework.</li>
+            <li>
+              • <strong className="text-ink">Estos nueve activos se eligieron a mano, y eso infla
+              los retornos.</strong> Medido después sobre 104 activos seleccionados por regla,
+              comprar y mantener rinde un CAGR mediano del −11,1% frente al +65,9% de estos
+              nueve. La ventaja relativa frente a mantener sí se sostiene fuera de ellos; la
+              magnitud absoluta de esta página, no.
+            </li>
+            <li>• El sesgo de supervivencia no lo elimina el framework: son los pares listados hoy.</li>
             <li>• Ninguna estrategia está aprobada para operar con dinero real.</li>
           </ul>
         </CardBody>

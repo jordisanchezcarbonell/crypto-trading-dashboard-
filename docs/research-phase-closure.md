@@ -1,9 +1,13 @@
 # Cierre de fase — Plataforma de research y búsqueda de estrategias
 
-> Copia del informe de cierre que vive en `crypto-trading-lab`, rama `research/platform`,
-> en `docs/research_phase_closure.md`. Se duplica aquí para que quien lea solo el dashboard
+> Copia del informe que vive en `crypto-trading-lab`, rama `research/platform`, en
+> `docs/research_phase_closure.md`. Se duplica aquí para que quien lea solo el dashboard
 > sepa qué muestran estas vistas y qué no. **El original manda**: si divergen, gana el del
 > repositorio de research, que es donde están los datos y los tests.
+>
+> **Lee la sección 7 antes de interpretar cualquier gráfico de este dashboard.** Las vistas
+> muestran el universo de nueve activos, y esos retornos absolutos están inflados por cómo
+> se eligieron esos nueve.
 
 Fecha: 2026-09-09. Rama `research/platform`. RUN-3 intacto: ni una línea de su código, sus
 SQLite, sus runners o su exporter se ha tocado.
@@ -149,7 +153,70 @@ funding era la barata de las tres y ya está probada y agotada para esta reserva
 
 ---
 
-## 7. Estado
+## 7. Continuación posterior al cierre, y lo que corrige
 
-Fase **cerrada**. Nada promovido a paper, nada desplegado, nada operando con dinero real.
-RUN-3 sigue exactamente como estaba.
+Después de cerrar la fase el trabajo siguió, y dos hallazgos modifican lo de arriba lo
+bastante como para que quede aquí y no en un anexo.
+
+### El universo era el que estaba rindiendo (R7)
+
+Los nueve activos se eligieron a mano. Sustituida esa elección por una regla mecánica, el
+universo pasa a 104 activos, y comprar y mantener revela lo que estaba pasando:
+
+| | CAGR mediano del control |
+|---|---:|
+| Los 9 originales | **+65,9%** |
+| Los 95 nuevos | **-11,1%** |
+
+**Todos los retornos absolutos que este proyecto ha citado están inflados por esa
+selección.** El 6624% de EMA-v1 en BTC o el 19903% en BNB describen aquellos activos, no la
+regla.
+
+Pero la ventaja *relativa* sí generaliza, y mejor de lo que parecía. Comparada de forma
+pareada contra mantener el mismo activo en la misma ventana, EMA-v2-risk gana en **71 de 95**
+activos nuevos, frente a solo 2 de 7 en los originales. Y es la única con mediana positiva
+fuera de los nueve: **+20,0%** donde el control da -35,8%, con una caída del -28,4% frente
+al -94,9%.
+
+La conclusión sobre EMA-v2-risk sale **reforzada**. Lo que cae es la magnitud esperable: el
+Sharpe pasa de 1,42 a 0,34 en un activo cualquiera.
+
+### Un banco de pruebas, y cuánto vale (R6)
+
+Hay una criba de desarrollo que no puede leer la reserva —rechaza por excepción cualquier
+spec que no sea del lado de desarrollo— y que juzga cinco puertas: amplitud, ventaja
+corregida por multiplicidad, rotación, resistencia a fricciones y correlación con las
+incumbentes.
+
+Se pasó a las cuatro candidatas. Tres REJECT, y una ADVANCE: `funding-pressure-v1`, que era
+justamente la única con resultado de reserva ya conocido, donde había sido **rechazada**.
+
+Así que la criba aprobó algo que después falló, y eso calibra para qué sirve:
+
+| Puerta | Desarrollo | Reserva | ¿Transfirió? |
+|---|---|---|---|
+| Diversificación | 0,50 | 0,49 | **sí** |
+| Fricciones | 90,5% | ~93% | **sí** |
+| Rotación | 17,6 | 30,4 | sí |
+| Amplitud | 7/7 | 3/7 | **no** |
+| Ventaja | 0,892 | 0,118 | **no** |
+
+**Las propiedades estructurales de una regla transfieren; su rendimiento no.** El valor de
+la criba está en sus REJECT: ahorró tres miradas a la reserva. Un ADVANCE solo dice que
+ninguna razón barata para descartarla se cumple.
+
+### Funding: descargado, probado, agotado
+
+Dataset congelado de funding de perpetuos, unido a las velas con regla causal verificada
+sobre 56.336 barras sin un solo desajuste. Dos candidatas, ambas rechazadas. La hipótesis de
+carry salió **invertida**: el funding alto predice retornos más altos. Y aunque el funding
+resultó ser la primera señal con información *e* independencia del régimen EMA
+(concordancia 0,59), la regla construida sobre ella no sobrevivió a la reserva.
+
+## 8. Estado
+
+Fase **cerrada**. 11 estrategias, 222 experimentos, 200 specs versionados, 1.443 tests, 104
+activos por regla, 95 ensayos declarados.
+
+Nada promovido a paper, nada desplegado, nada operando con dinero real. RUN-3 sigue
+exactamente como estaba, anclado a su tag.

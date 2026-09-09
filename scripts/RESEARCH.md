@@ -68,3 +68,17 @@ duplicación; elimina que pueda divergir en silencio.
 
 `docs/research-phase-closure.md` resume qué se midió, qué se descartó y qué no demuestran
 estas vistas. Conviene leerlo antes de sacar conclusiones de un gráfico.
+
+## Aviso sobre la magnitud de las cifras
+
+Ambas vistas muestran el **universo de nueve activos**, elegido a mano. Medido después sobre
+104 activos seleccionados por regla mecánica, comprar y mantener rinde un CAGR mediano del
+**−11,1%** frente al **+65,9%** de esos nueve: aquellos activos subieron de forma
+excepcional, y los retornos absolutos que se ven aquí son en buena parte una propiedad de esa
+selección.
+
+Lo que sí se sostiene fuera de ellos es la ventaja **relativa**: comparada de forma pareada
+contra mantener el mismo activo en la misma ventana, EMA-v2-risk gana en 71 de 95 activos
+que nunca vio. Pero su Sharpe pasa de 1,42 a 0,34.
+
+Contexto completo en `docs/research-phase-closure.md`, sección 7.
