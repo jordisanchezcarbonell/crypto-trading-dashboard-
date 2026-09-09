@@ -1,0 +1,12 @@
+{
+ "contract_version": 1,
+ "experiments": 28,
+ "periods_per_year": 2191.5,
+ "tables": {
+  "research_asset_metrics": 252,
+  "research_equity_points": 15576,
+  "research_experiments": 28,
+  "research_metrics": 28
+ },
+ "timeframe": "4h"
+}

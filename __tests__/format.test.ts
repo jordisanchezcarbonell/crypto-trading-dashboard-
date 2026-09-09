@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   UNAVAILABLE,
+  formatDateTimeUtc,
+  formatDateUtc,
   formatOptionalNumber,
   formatOptionalPct,
   formatOptionalSignedPct,
@@ -110,5 +112,24 @@ describe("formatSignalValue", () => {
     expect(formatSignalValue(true)).toBe("true");
     // NaN/Infinity are not numbers a reader can use; do not dress them up.
     expect(formatSignalValue(Number.NaN)).toBe("NaN");
+  });
+});
+
+describe("UTC formatters", () => {
+  it("renders a research instant in UTC, not the viewer's zone", () => {
+    // The frozen dataset boundary. In any zone east of Greenwich the local
+    // formatter would print a later clock time under a "UTC" label.
+    expect(formatDateTimeUtc("2026-08-19T12:00:00+00:00")).toBe(
+      "2026-08-19 12:00"
+    );
+    expect(formatDateUtc("2026-08-19T12:00:00+00:00")).toBe("2026-08-19");
+  });
+
+  it("normalises an offset instant to UTC", () => {
+    expect(formatDateTimeUtc("2026-08-19T14:00:00+02:00")).toBe(
+      "2026-08-19 12:00"
+    );
+    // Same instant, a day earlier in UTC.
+    expect(formatDateUtc("2026-08-20T01:00:00+02:00")).toBe("2026-08-19");
   });
 });

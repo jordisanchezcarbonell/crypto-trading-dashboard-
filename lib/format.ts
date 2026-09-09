@@ -154,3 +154,45 @@ export function formatSignalValue(value: unknown): string {
     maximumFractionDigits: digits,
   });
 }
+
+// -----------------------------------------------------------------------------
+// UTC formatters.
+//
+// `formatDateTime` renders in the viewer's local zone, which is right for an
+// operational readout ("when did this happen for me?") and wrong for a research
+// window. Research instants ARE the protocol: `2026-08-19T12:00:00Z` is the
+// frozen dataset boundary, and rendering it as "14:00" in Madrid while the
+// label still says UTC states something false about the experiment.
+//
+// These format in UTC regardless of where the page is opened.
+// -----------------------------------------------------------------------------
+
+function utcParts(iso: string): {
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+  minute: string;
+} {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return {
+    year: String(d.getUTCFullYear()),
+    month: pad(d.getUTCMonth() + 1),
+    day: pad(d.getUTCDate()),
+    hour: pad(d.getUTCHours()),
+    minute: pad(d.getUTCMinutes()),
+  };
+}
+
+/** `yyyy-MM-dd HH:mm`, always in UTC. */
+export function formatDateTimeUtc(iso: string): string {
+  const p = utcParts(iso);
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
+}
+
+/** `yyyy-MM-dd`, always in UTC. */
+export function formatDateUtc(iso: string): string {
+  const p = utcParts(iso);
+  return `${p.year}-${p.month}-${p.day}`;
+}

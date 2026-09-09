@@ -1,0 +1,69 @@
+{
+  "id": "cross-sectional-momentum-v1",
+  "label": "CSM-v1",
+  "summary": "Shared-capital cross-sectional momentum: rank the nine assets by 180-bar momentum at 00:00 UTC, hold the top 3 equally, rebalance atomically at the common open. No stop, no blocked reentry.",
+  "parameters": [
+    { "label": "Momentum lookback", "value": "180 bars" },
+    { "label": "Top N", "value": 3 },
+    { "label": "Decision hour", "value": "00:00 UTC" },
+    { "label": "Ranking", "value": "descending, tie-break symbol_ascending" },
+    { "label": "Capital", "value": "90,000 shared" },
+    { "label": "Rebalance", "value": "atomic_common_open, sales before buys" },
+    { "label": "Stop", "value": "none" }
+  ],
+  "states": [
+    {
+      "state": "RESULTS_NOT_EXPORTED",
+      "evidence": "Multi-asset engine, spec and multi-asset-protocol-v1 committed (2c3bce7, research/platform). Baseline, execution-cost stress (1x/1.5x/2x), parameter stability (120/180/240 x top 2/3/4) and temporal diagnostics have been run and reviewed for this spec. None of them is persisted as a result artefact in the lab repository, so this dashboard has no dataset to render."
+    }
+  ],
+  "metrics": null,
+  "equity": null,
+  "equityUnavailableReason": "Baseline results exist but are not yet persisted in the repository. The research store defines its layout only (research/store/layout.py) and exports no equity series yet.",
+  "temporalBlocks": null,
+  "temporalUnavailableReason": "Temporal block results exist but are not yet persisted in the repository.",
+  "frictionScenarios": null,
+  "frictionUnavailableReason": "Execution-cost stress results exist but are not yet persisted in the repository.",
+  "parameterGrid": {
+    "rowLabel": "momentum_lookback_bars",
+    "colLabel": "top_n",
+    "rowValues": [120, 180, 240],
+    "colValues": [2, 3, 4],
+    "cells": [
+      { "rowValue": 120, "colValue": 2, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 120, "colValue": 3, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 120, "colValue": 4, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 180, "colValue": 2, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 180, "colValue": 3, "isBaseline": true, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 180, "colValue": 4, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 240, "colValue": 2, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 240, "colValue": 3, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } },
+      { "rowValue": 240, "colValue": 4, "isBaseline": false, "values": { "x1": { "sharpe": null, "cagrPct": null, "profitFactor": null }, "x2": { "sharpe": null, "cagrPct": null, "profitFactor": null } } }
+    ],
+    "source": {
+      "label": "Grid declared; results not persisted",
+      "ref": "crypto-trading-lab@research/platform:src/crypto_trading_lab/research/specs/baselines/cross-sectional-momentum-v1.toml",
+      "scope": "Baseline cell 180 / 3 is the preregistered configuration; the surrounding cells are the sensitivity region that was swept at 1x and 2x execution costs.",
+      "derivedFields": [],
+      "caveat": "Only the baseline coordinates are rendered. Parameter-stability results exist for this grid but are not yet persisted in the repository, so no cell carries a measured value. Nothing here is a placeholder for a number that was never computed."
+    }
+  },
+  "parameterUnavailableReason": null,
+  "provenance": {
+    "strategyName": "cross-sectional-momentum-v1",
+    "version": "1.0.0",
+    "strategyCodeHash": null,
+    "experimentId": null,
+    "protocol": "multi-asset-protocol-v1",
+    "protocolHash": "ee0ef61c84e5a0415f4e8a71f680fba037975d419abfb157207174d5e79eff0e",
+    "protocolSemanticHash": null,
+    "datasetId": "binance-spot-4h-frozen-2026-08-19",
+    "datasetManifestSha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+    "sourceCommit": null,
+    "specPath": "src/crypto_trading_lab/research/specs/baselines/cross-sectional-momentum-v1.toml",
+    "windowStartPolicy": "first_common_bar across the nine ranked assets",
+    "windowStart": null,
+    "windowEnd": "2026-08-19T12:00:00+00:00",
+    "segment": "IN_SAMPLE"
+  }
+}

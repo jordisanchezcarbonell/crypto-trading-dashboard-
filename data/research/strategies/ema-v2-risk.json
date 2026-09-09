@@ -1,0 +1,74 @@
+{
+  "id": "ema-v2-risk",
+  "label": "EMA-v2-risk",
+  "summary": "EMA 50/200 long-only signal with causal realised-volatility sizing to a 40% annual target, daily 00:00 UTC rebalance and a 10% stop from the entry fill.",
+  "parameters": [
+    { "label": "EMA fast", "value": 50 },
+    { "label": "EMA slow", "value": 200 },
+    { "label": "Volatility lookback", "value": "180 bars" },
+    { "label": "Annual vol target", "value": "40%" },
+    { "label": "Annualization", "value": 2191.5 },
+    { "label": "Sizing", "value": "target_fraction_at_reference" },
+    { "label": "Stop", "value": "fixed_fraction_from_entry_fill 10%" },
+    { "label": "Reentry", "value": "blocked_until_flat_signal" },
+    { "label": "Rebalance", "value": "daily_utc_hour 00:00 UTC" }
+  ],
+  "states": [
+    {
+      "state": "FROZEN_CANDIDATE",
+      "evidence": "docs/research_ema_v2_forward_oos_contract.md — \"State: FROZEN RESEARCH CANDIDATE. NOT production approved.\""
+    },
+    {
+      "state": "TRUE_OOS_PENDING",
+      "evidence": "Forward OOS contract preregistered (commit db64443); FROZEN_DATASET_END = 2026-08-19T12:00:00Z, no forward checkpoint recorded yet."
+    }
+  ],
+  "metrics": {
+    "totalReturnPct": 785.26,
+    "cagrPct": 28.18,
+    "maxDrawdownPct": -23.24,
+    "sharpe": 1.401,
+    "sortino": 1.986,
+    "calmar": 1.212,
+    "profitFactor": null,
+    "winRatePct": null,
+    "trades": 295,
+    "turnover": null,
+    "exposurePct": null,
+    "feesPaid": null,
+    "slippagePaid": null,
+    "finalEquity": 619684.0,
+    "source": {
+      "label": "Phase 1.8 report — equal-weight portfolio, scoring assets",
+      "ref": "crypto-trading-lab:reports/phase_1_8.md § Carteras equal-weight OOS",
+      "scope": "7 scoring assets (SOL, BNB, XRP, ADA, LINK, AVAX, DOGE), 10,000 per isolated sleeve, window end 2026-08-19T12:00:00Z",
+      "derivedFields": ["totalReturnPct", "trades"],
+      "caveat": "These are the phase-1.8 backtest figures, not an export of research experiment exp-f3303d447106dd13. The research engine has not published metrics for this experiment_id yet, and the research protocol universe is 9 assets against the 7 scored here. Derived fields: totalReturnPct = 619,684.00 / 70,000 - 1 (the same arithmetic reproduces the report's published EMA-v1 figure of 8440.34% exactly); trades = sum of the per-asset trade counts published in the same report (36+47+56+43+45+34+34)."
+    }
+  },
+  "equity": null,
+  "equityUnavailableReason": "The research store does not export equity points yet (research/store/layout.py defines the layout only). No equity series exists in the repository for this experiment — only the rendered PNG figures of phase 1.6.",
+  "temporalBlocks": null,
+  "temporalUnavailableReason": "No temporal block split has been run or recorded for this candidate. Phase 1.8 reports a single full-window backtest.",
+  "frictionScenarios": null,
+  "frictionUnavailableReason": "Execution-cost stress is R5 work and has not been run. Phase 1.8 stresses realised winners (haircuts), which is a different question and is not shown here as if it were friction stress.",
+  "parameterGrid": null,
+  "parameterUnavailableReason": "No parameter grid exists for this candidate by design: the phase-1.8 protocol fixed the sizing parameters ex ante and states no grid search was performed.",
+  "provenance": {
+    "strategyName": "ema-v2-risk",
+    "version": "1.0.0",
+    "strategyCodeHash": "f804ee96fef4130522f5f01dd954b4453547773e26327b12d849c255343b34f9",
+    "experimentId": "exp-f3303d447106dd13",
+    "protocol": "protocol-v1",
+    "protocolHash": "e2e282a636281f30a5065b2038bb3db75d4436ef6104b9bf051cc455c19d856d",
+    "protocolSemanticHash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+    "datasetId": "binance-spot-4h-frozen-2026-08-19",
+    "datasetManifestSha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+    "sourceCommit": "f60a7264db3f67d8e055ed6d54cfe3c0a2be1878",
+    "specPath": "src/crypto_trading_lab/research/specs/baselines/ema-v2-risk.toml",
+    "windowStartPolicy": "per_asset_group (reference assets pinned to 2017-08-17T04:00:00Z, scoring assets first_available_bar)",
+    "windowStart": null,
+    "windowEnd": "2026-08-19T12:00:00+00:00",
+    "segment": "IN_SAMPLE"
+  }
+}
