@@ -1,0 +1,1403 @@
+[
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T14:46:02.224000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "2bf488cf7eea9b7f7e9a782192b6692e31ce6f31f844c205f923c10fd8426782",
+  "execution_id": "exec-20260909T1446Z-82b04f7a",
+  "experiment_id": "exp-89d20e483266da0d",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "4f7f092731039ee5d8c08eebd2c45a8110f8ce7c8a416690f897dcb23da645c1",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "buy-and-hold-v1",
+  "strategy_code_hash": "9d2028de54ec1fc2928d3d6ee905c631769e5e0318cc420fe21ce205212dddbf",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "control"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:53:54.567000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "2e4b4e93f44d621aa3ad5fb0425d953f2ee2b2423702ebc58d511b3a6492fcf8",
+  "execution_id": "exec-20260909T1353Z-0b7d6d48",
+  "experiment_id": "exp-f448192581c8de8f",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "df491f67f80413302292db3e2fbdac155336c69dcfca50602abc857c9f0dec72",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "buy-and-hold-v1",
+  "strategy_code_hash": "9d2028de54ec1fc2928d3d6ee905c631769e5e0318cc420fe21ce205212dddbf",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "control",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T15:07:39.151000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "12379d2006feeca5fcc3e3a6bea96fe1c25bcae3b67ba38780a5c4a1f8e79e3e",
+  "execution_id": "exec-20260909T1507Z-fd59b2e9",
+  "experiment_id": "exp-9f42cf51e93655b0",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "56f3b8a3209442e68581985e5909e6ba4cdece2345a50355d67a6cdfbd427380",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "buy-and-hold-v1",
+  "strategy_code_hash": "9d2028de54ec1fc2928d3d6ee905c631769e5e0318cc420fe21ce205212dddbf",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "control",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:46:33.688000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "edf07f6c71a3e05f498ed4e75dc7e67e542bd0b2c38f380bba60403819f5998f",
+  "execution_id": "exec-20260909T1346Z-8120e6f4",
+  "experiment_id": "exp-a79e4cb054e7f8e8",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "c8d6bb8f1e3b12778f21c716624260348b9e10b5c133d0e83ade6600f33778ad",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "buy-and-hold-v1",
+  "strategy_code_hash": "9d2028de54ec1fc2928d3d6ee905c631769e5e0318cc420fe21ce205212dddbf",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "control",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T14:45:35.578000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "97cc545c1f46f854553dcc268b90e0eefe51bb7a51f11be73668eda63e0145a4",
+  "execution_id": "exec-20260909T1445Z-f37a991b",
+  "experiment_id": "exp-224c57fc4cb94961",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "360f76752f0bbea30c40f5111353c583dceb463cee486a9594eab4bf12c39d2f",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v1",
+  "strategy_code_hash": "b66d237b64737b1a879161a2325815f69825dfe24ae8ed36b7e4cd572f2b1a92",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:53:59.829000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "d25469a408a4dfb2ca6ef751c18bcd9c90dc11cef740fc17b2552f4c57acee49",
+  "execution_id": "exec-20260909T1353Z-76b0b141",
+  "experiment_id": "exp-fb17053ea7de21b1",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "22ef10031d616d621be2ff3ed43d30055a6cc1a12e444bb6e369a8a06983ee77",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v1",
+  "strategy_code_hash": "b66d237b64737b1a879161a2325815f69825dfe24ae8ed36b7e4cd572f2b1a92",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T15:07:41.983000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "fa31ce4586e304b1147770e431cf0ef91e2c54f57d1e895070fd9fb7b63680ad",
+  "execution_id": "exec-20260909T1507Z-6767e023",
+  "experiment_id": "exp-811bd407bb2499ad",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "3a3661dd142ad4f89e063e53959764f12b763be99125027cb339616c7b0d2e9c",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v1",
+  "strategy_code_hash": "b66d237b64737b1a879161a2325815f69825dfe24ae8ed36b7e4cd572f2b1a92",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:46:36.953000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "a06e4ecaf4f6a1bf25555efa06936d68263d43b1ecd5d5037b7f6eda88bfd3cb",
+  "execution_id": "exec-20260909T1346Z-02a8c982",
+  "experiment_id": "exp-2a0be302d0c94644",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "a069fd7a1ff87ab54570bff976afa7aef17114671e2675948e82cdd7e2669439",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v1",
+  "strategy_code_hash": "b66d237b64737b1a879161a2325815f69825dfe24ae8ed36b7e4cd572f2b1a92",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T14:45:42.565000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "fff5b76e93f7cc0c658fa7209765ec84246347e4b1e2eab7e4334f27a9abef57",
+  "execution_id": "exec-20260909T1445Z-3693aadd",
+  "experiment_id": "exp-f3303d447106dd13",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "a134a07df701acd1c558bbf0ef259f6234d320465b4ab01d6702c42257a6077a",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v2-risk",
+  "strategy_code_hash": "f804ee96fef4130522f5f01dd954b4453547773e26327b12d849c255343b34f9",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T14:58:41.618000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "5fa2c152eb64a54f415330e8cfdb346af388f066546e57e247c13fb99b8c9913",
+  "execution_id": "exec-20260909T1458Z-3a9ba244",
+  "experiment_id": "exp-4ee8dde6a9412bcf",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "8174b61945395daff20403e6fa024c8a6df8fb8a32bafa6a5fd85c3b7321f081",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v2-risk",
+  "strategy_code_hash": "f804ee96fef4130522f5f01dd954b4453547773e26327b12d849c255343b34f9",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "sensitivity",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T15:07:44.773000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "b8bb2566573be05438878db317abe5402252b0caf4d05193b4290f6d5d79e5b3",
+  "execution_id": "exec-20260909T1507Z-37b46f7b",
+  "experiment_id": "exp-f100b1b7dcbed53d",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "8a7430b9e09c25e8d5a3d5424f8b92dc7b6917c0c0d667b6418b8a51146997d3",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v2-risk",
+  "strategy_code_hash": "f804ee96fef4130522f5f01dd954b4453547773e26327b12d849c255343b34f9",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:46:39.778000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "7b58fb98cbba86f3c97acdc217b0f656dddcad79879c0a2481abc047ad51d57e",
+  "execution_id": "exec-20260909T1346Z-fe5f7a3b",
+  "experiment_id": "exp-3838c479ef1234e1",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "484791051dee79614d8cd25b5bd3adad190ed81864f6e3e076431f4b784b1392",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "ema-v2-risk",
+  "strategy_code_hash": "f804ee96fef4130522f5f01dd954b4453547773e26327b12d849c255343b34f9",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:12:43.982000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "1d3ef62d1eadaebfac0b80e83b6b5e8c4faf0f3be464afa2068547e3b26a8a98",
+  "execution_id": "exec-20260909T1312Z-0e7262e3",
+  "experiment_id": "exp-714ff6b68d4bcdc7",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "955e6689c90973bff3c2001a85718c4681c6443067db0359aca2819a46d9dcc0",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "donchian-v1",
+  "strategy_code_hash": "77a542cc02e7b3e2a7333dd931c6ab449692d1e2b8bff32120a29d6e78f51015",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T14:28:53.431000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "9239e67842dd657494dadcca500f4a791247107f9e7406773e62e8c4862ac505",
+  "execution_id": "exec-20260909T1428Z-20598e1a",
+  "experiment_id": "exp-00382a66ecc54079",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "7f4e97ebc4c4872418ae4dcf751882e76052ba2bf3b196c67b16d07eb6f01fb5",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "donchian-v1",
+  "strategy_code_hash": "77a542cc02e7b3e2a7333dd931c6ab449692d1e2b8bff32120a29d6e78f51015",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "sensitivity",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T15:07:59.266000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "e7189d7712dae6a0af5b897a19dc4523cba90960ee79f9adbca9a58a91bb0269",
+  "execution_id": "exec-20260909T1507Z-1c5c0590",
+  "experiment_id": "exp-1030b6a283d13b8a",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "a228ddfda03128f41c70e1055e1c2a1294dcc07324646f32140797bc1c1f1b87",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "donchian-v1",
+  "strategy_code_hash": "77a542cc02e7b3e2a7333dd931c6ab449692d1e2b8bff32120a29d6e78f51015",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:46:55.707000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "0a40d93a775c1abfee5cbcdd2e87c0280d73c59ae3f7974c25e3b38a9b55a062",
+  "execution_id": "exec-20260909T1346Z-8f1f476d",
+  "experiment_id": "exp-d3a41d6e1baa3f86",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "d47f7cc7627970118c4b00cc74b5f3f6b277e69a009553ff3eaf9c61c95ece33",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "donchian-v1",
+  "strategy_code_hash": "77a542cc02e7b3e2a7333dd931c6ab449692d1e2b8bff32120a29d6e78f51015",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:12:48.907000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "53a0e95863414517f8311f70e1f830d3907cab65ae9e6a7b9a0d5c46adad6f86",
+  "execution_id": "exec-20260909T1312Z-96f9b170",
+  "experiment_id": "exp-a21dc3719d9a46c0",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "bc10e1af5efb89238ea6ee2729809a8ca0d104dd703b10ef4552df3665d702f1",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "mean-reversion-v1",
+  "strategy_code_hash": "536f70ef628ea1167912c3282774aa2b069d13cbf1e090ef3239164401ec0acd",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:54:41.146000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "c2df7de912d2234c340c6394701cbe6b5ef45d6d0b9d820001e51cc3203399f8",
+  "execution_id": "exec-20260909T1354Z-3f5703fc",
+  "experiment_id": "exp-c83fa3f6dc2150d6",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "51359debb751b6ed7850879c7e1f127bfa7f1409dfb7dde82924f9ee5c4994ac",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "mean-reversion-v1",
+  "strategy_code_hash": "536f70ef628ea1167912c3282774aa2b069d13cbf1e090ef3239164401ec0acd",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:54:44.498000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "cd141b3877a9f48658b6cba19a12ee2a2a925a315057cf7613852875bb93dcb6",
+  "execution_id": "exec-20260909T1354Z-15152a40",
+  "experiment_id": "exp-76db2f7f873f77de",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "75c302d16f0de9f4c3fec75ac63a0571730ab3c2cddbeff662669121c3e854bd",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "mean-reversion-v1",
+  "strategy_code_hash": "536f70ef628ea1167912c3282774aa2b069d13cbf1e090ef3239164401ec0acd",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:46:59.128000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "0ed2157244ffb0e8c393ea081e44530d33098ae69fd4f1f1c44afd7c03785fcc",
+  "execution_id": "exec-20260909T1346Z-b906abc1",
+  "experiment_id": "exp-5f8273a9eabb76a7",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "d073f5a4bbc0e64e557174eff21444af600a11b5a2130b5fa362b872bbb165df",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "mean-reversion-v1",
+  "strategy_code_hash": "536f70ef628ea1167912c3282774aa2b069d13cbf1e090ef3239164401ec0acd",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "baseline",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:12:53.728000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "2d989fbfc2c7733f568d69e8a4098cc610ece3c68b0a843ab0018d45a7275fac",
+  "execution_id": "exec-20260909T1312Z-147cf5c0",
+  "experiment_id": "exp-52679cc43fd8f418",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "a046bca5088aa75199bb5cf15f0662ccacb7982134ae9813dcd3d8fe49431010",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-average-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:54:47.339000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "c52ab5d6f3a6a21cc3bbcf8d449ca70a5dd756dabb7342f20c95a75b750214be",
+  "execution_id": "exec-20260909T1354Z-88b1d9d9",
+  "experiment_id": "exp-f8cd0acc64fa96b5",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "96d1cfe1cc247a5300a12317184bc817d9991423762514277b8d1a94b1b20b13",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-average-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:54:51.452000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "708889431c65933bed483d4dd61b9694accd06f85dc2098896e5e285451e27c3",
+  "execution_id": "exec-20260909T1354Z-b780f9d0",
+  "experiment_id": "exp-ef9df94e1985bd94",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "09ae84e9e24717a72b198c4972c263d8777b6302968f0f512935fe0e76bf6c71",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-average-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:47:02.260000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "0f1a24749a2bc49dc36f8b2fca889dee5f68842966c314c337c58b3b3eeb316b",
+  "execution_id": "exec-20260909T1347Z-a9ae3733",
+  "experiment_id": "exp-3dd1a392250b53c3",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "82d0b18a98a39eaad52ef23f9490690fdeb5aac56cfafca1640c93333fa35b0d",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-average-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:13:00.164000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "91133811ef82727ad51aa11efed6020d0db0a367a0c96e0aa87a0653b24100b6",
+  "execution_id": "exec-20260909T1313Z-e5b69131",
+  "experiment_id": "exp-6d0341ac888d9b92",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "IN-SAMPLE (full history)",
+  "partition_side": null,
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "da10e7eadeff14e64bf7b4d4c11dc81d0debd5237f882303707276d54131ee1e",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-bband-rsi-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": []
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:54:55.626000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2023-01-01T00:00:00+00:00",
+  "evidence_hash": "d3b46f5181173aed606355165a38baf9e9eae0dc9a1d94276c145fd39553f0b1",
+  "execution_id": "exec-20260909T1354Z-be6d2816",
+  "experiment_id": "exp-b5a3a2b0071a67ab",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "DEVELOPMENT",
+  "partition_side": "development",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "d13d3d2fddac0e21124b49718e0052caed5f86e5fd95babc556457f271e15434",
+  "segment": "IN_SAMPLE",
+  "start_at": "2017-08-17T04:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-bband-rsi-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE",
+   "partition-v1",
+   "development"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "development"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:54:59.799000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "9503a348d1e7fc466ffa02b900d4bbf886cf519fd54b0ef9ebe0fe839b310a96",
+  "execution_id": "exec-20260909T1354Z-f50d25a4",
+  "experiment_id": "exp-b62c51dc52307043",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "f6dee5cf9a386c483291875d21a2d0ca1943d325283503db7c57c1bea31b36ac",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-bband-rsi-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": false,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE",
+   "partition-v1",
+   "reserve"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ },
+ {
+  "contract_version": 1,
+  "created_at": "2026-09-09T13:47:05.834000+00:00",
+  "dataset_id": "binance-spot-4h-frozen-2026-08-19",
+  "dataset_manifest_sha256": "9b97ab1625340abf50b6d1d617f807b716b28cee6f247c126c820ad543709479",
+  "end_at": "2026-08-19T12:00:00+00:00",
+  "evidence_hash": "84a5409d6f04fb2f32d827cffa334c44807e1d5aeeca69c180fda611d6a6cc4b",
+  "execution_id": "exec-20260909T1347Z-9ea9dc2b",
+  "experiment_id": "exp-3d9c09037a55a4b2",
+  "git_commit": "9eb70f37bff485170a252211d2f9ba4c98800147",
+  "git_dirty": true,
+  "label": "OUT-OF-SAMPLE \u00b7 costs x2",
+  "partition_side": "reserve",
+  "protocol_hash": "d44a065d3e2e001f10e73bd33a7644f00edda3343d80564bede4e880a55d8fad",
+  "result_hash": "d8dd84874e138be05cd46ab51864c396858ebb49086ea3ae349ffbd9dd915e21",
+  "segment": "OUT_OF_SAMPLE",
+  "start_at": "2023-01-01T00:00:00+00:00",
+  "status": "OK",
+  "strategy": "public-bband-rsi-4h-v1",
+  "strategy_code_hash": "fd2b9121847f95d55f5815ae51f397d13fb346f12f98acd29654f5f90dfb3b30",
+  "strategy_version": "1.0.0",
+  "stressed": true,
+  "tags": [
+   "external-signal-adaptation",
+   "IN_SAMPLE",
+   "partition-v1",
+   "reserve",
+   "stress",
+   "all-x2"
+  ],
+  "timeframe": "4h",
+  "universe": [
+   "BTC/USDT",
+   "ETH/USDT",
+   "SOL/USDT",
+   "BNB/USDT",
+   "XRP/USDT",
+   "ADA/USDT",
+   "LINK/USDT",
+   "AVAX/USDT",
+   "DOGE/USDT"
+  ],
+  "variants": [
+   {
+    "kind": "friction_scale",
+    "params": {
+     "fee_multiplier": 2.0,
+     "slippage_multiplier": 2.0,
+     "spread_multiplier": 2.0
+    }
+   },
+   {
+    "kind": "temporal_partition",
+    "params": {
+     "partition": "partition-v1",
+     "partition_sha256": "bcb29ca53b7b0e4d4b2acdd6f9d0bca040c3e8335755172a027cb2c5c9da89fb",
+     "side": "reserve"
+    }
+   }
+  ]
+ }
+]
