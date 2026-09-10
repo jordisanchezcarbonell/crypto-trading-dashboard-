@@ -30,6 +30,12 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
               Fuera de muestra
             </Link>
             <Link
+              href="/research/regime"
+              className="text-xs text-muted hover:text-ink"
+            >
+              Régimen
+            </Link>
+            <Link
               href="/research/investigations"
               className="text-xs text-muted hover:text-ink"
             >
