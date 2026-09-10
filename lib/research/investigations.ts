@@ -178,6 +178,38 @@ export const INVESTIGATIONS: Investigation[] = [
     source: "docs/research_pattern_sweep.md",
   },
   {
+    id: "volume-confirmed-breakout",
+    title: "Rotura de máximos confirmada por volumen",
+    hypothesis:
+      "Una rotura acompañada de volumen inusual separa el movimiento real del ruido, y filtrarla debería subir la ventaja por operación por encima de su coste.",
+    verdict: "DESCARTADO",
+    conclusion:
+      "No es que no ayude: resta. El filtro y el stop del 10% hacen el mismo trabajo, y hacerlo dos veces sale peor que hacerlo una.",
+    evidence: [
+      {
+        label: "Canal 60/30 sin filtro (control)",
+        value: "48/102 · Sharpe 0,300",
+        note: "El control no estaba en el plan; sin él la comparación cambiaba dos cosas a la vez.",
+      },
+      {
+        label: "Canal 60/30 con filtro (z ≥ 1)",
+        value: "40/102 · Sharpe 0,197",
+        note: "Ocho activos rentables menos y un tercio menos de Sharpe.",
+      },
+      {
+        label: "Ventaja bruta por operación",
+        value: "433 → 491 bps",
+        note: "Sube de verdad. Sube por construcción al quitar operaciones que rendían menos que la media, y eso no es rendir menos que cero.",
+      },
+      {
+        label: "Listón de multiplicidad",
+        value: "Sharpe 0,697",
+        note: "Lo que 215 ensayos acumulados producen por puro azar.",
+      },
+    ],
+    source: "docs/research_volume_confirmed_breakout_result.md",
+  },
+  {
     id: "short-selling",
     title: "Ponerse corto",
     hypothesis:
