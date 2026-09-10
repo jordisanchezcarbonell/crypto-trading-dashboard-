@@ -34,7 +34,7 @@ export function Investigations() {
       <Card>
         <CardHeader
           title="El suelo de fricción"
-          subtitle={`Un viaje de ida y vuelta cuesta ${ROUND_TRIP_BPS} bps medidos en el motor. Esto explica de una vez casi todo lo que hay debajo.`}
+          subtitle={`Un viaje de ida y vuelta cuesta ${ROUND_TRIP_BPS.toString().replace(".", ",")} bps medidos en el motor con las fricciones del propio protocolo. Esto explica de una vez casi todo lo que hay debajo.`}
         />
         <CardBody className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -75,7 +75,7 @@ export function Investigations() {
             </div>
           </div>
           <p className="border-t border-line pt-3 text-xs leading-relaxed text-muted">
-            Hay un factor de 5 a 20 entre lo que encontramos y lo que se
+            Hay un factor de 6 a 25 entre lo que encontramos y lo que se
             necesita. No fueron seis mala suertes distintas; fue la misma
             aritmética seis veces. También dice dónde puede vivir un
             superviviente: rotando poco. La fricción no se compensa con acierto,

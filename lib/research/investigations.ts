@@ -48,8 +48,18 @@ export type Investigation = {
   source: string;
 };
 
-/** The friction every effect size on this page is measured against. */
-export const ROUND_TRIP_BPS = 23;
+/**
+ * The friction every effect size on this page is measured against.
+ *
+ * Measured in the engine with the protocol's own frictions: a fee_rate of 0.001,
+ * which is Binance's spot taker fee exactly, plus 5 bps of spread and 5 of
+ * slippage on both sides. This page previously showed 23, carried over from a
+ * fee_rate of 0.0004 that no protocol declares -- it understated the cost of
+ * every trade by 52%. No verdict on this page changes, since all of them were
+ * negative and a higher cost makes them more so, and the certified screen runs
+ * never used the wrong constant.
+ */
+export const ROUND_TRIP_BPS = 34.9;
 
 export const INVESTIGATIONS: Investigation[] = [
   {
@@ -257,11 +267,11 @@ export const FRICTION_FLOOR = {
     { label: "Funding pressure, diferencial", value: 6.0 },
   ],
   required: [
-    { label: "Rotando cada vela (4h)", trips: 2190, need: 23.5, cost: 504 },
-    { label: "Rotando cada día", trips: 365, need: 25.7, cost: 84 },
-    { label: "Rotando cada 3 días", trips: 122, need: 31.2, cost: 28 },
-    { label: "Rotando cada semana", trips: 52, need: 42.2, cost: 12 },
-    { label: "Rotando cada mes", trips: 12, need: 105.2, cost: 2.8 },
+    { label: "Rotando cada vela (4h)", trips: 2190, need: 35.4, cost: 765 },
+    { label: "Rotando cada día", trips: 365, need: 37.7, cost: 128 },
+    { label: "Rotando cada 3 días", trips: 122, need: 43.2, cost: 43 },
+    { label: "Rotando cada semana", trips: 52, need: 54.1, cost: 18 },
+    { label: "Rotando cada mes", trips: 12, need: 117.1, cost: 4.3 },
   ],
 };
 
